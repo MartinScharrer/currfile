@@ -67,7 +67,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
-% \changes{v1.0}{2004/11/05}{Initial version}
+% \changes{v0.1}{2010/04/08}{Initial version}
 %
 % \GetFileInfo{currfile.dtx}
 %
@@ -115,6 +115,16 @@
 %
 % More detailed information can be found in the implementation section (\ref{sec:impl}) if required.
 %
+% \subsection*{Package Options}
+% The package provides two options |mainext| and |maindir| which can be used to provide the extension and directory of the main file.
+% This is required if the above macros should be used for the main file itself and if this does has a file extension other than `|.tex|' (e.g.\ a |.dtx| file)
+% or is not located in the current directory.
+%
+% \section{Similar Packages}
+% The |fink| package (\emph{fi}le \emph{n}ame \emph{k}eeper) provides a similar functionality. It has inspired this package in several points (e.g.\ package
+% options). However, it does not exclude package and other preamble files and does not take care to change the filename \emph{after} the |\clearpage| of
+% |\include|.
+%
 % \StopEventually{}
 %
 %
@@ -135,6 +145,8 @@
 %
 %
 % \subsection{File Hooks}
+% The \pkg{filehook} package is used to execute the macros at the correct places.
+% The internal, not user, interface is used to make sure that the file names are valid for all other hooks.
 %
 %    \begin{macrocode}
 \RequirePackage{filehook}
@@ -161,6 +173,7 @@
 % \subsection{Set Current Values}
 %
 % \begin{macro}{\currfile@set}
+% Sets the file information which are parsed by \LaTeX's |\filename@parse|.
 %    \begin{macrocode}
 \def\currfile@set#1{%
   \begingroup
@@ -179,6 +192,10 @@
 %
 %
 % \subsection{File Stack}
+% The file information are pushed and popped on a stack to save and restore them when
+% entering and leaving a sub-file, respectively. This is quite similar to the way 
+% \LaTeX\ saves file base names and extension as well as the `@' status (letter or other) for
+% package and class files.
 %
 % \begin{macro}{\currfile@push}
 %    \begin{macrocode}
