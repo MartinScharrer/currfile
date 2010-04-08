@@ -1,0 +1,247 @@
+% \iffalse meta-comment
+%% Copyright (c) 2010 by Martin Scharrer <martin@scharrer-online.de>
+%% -----------------------------------------------------------------
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3c
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%
+%%   http://www.latex-project.org/lppl.txt
+%%
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008/05/04 or later.
+%%
+%% This work has the LPPL maintenance status `maintained'.
+%%
+%% The Current Maintainer of this work is Martin Scharrer.
+%%
+%% This work consists of the files currfile.dtx, currfile.ins
+%% and the derived file currfile.sty.
+%%
+%% $Id: standalone.dtx 1803 2010-04-03 13:59:44Z martin $
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{currfile.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<package>\ProvidesPackage{currfile}
+%<*package>
+    [2010/04/08 v0.1 Current input file name and path]
+%</package>
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{currfile}[2010/04/08]
+\usepackage{ifpdf}
+\usepackage{hyperref}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{currfile.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{148}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v1.0}{2004/11/05}{Initial version}
+%
+% \GetFileInfo{currfile.dtx}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+% 
+% \ifpdf
+% \hypersetup{%
+%   pdfauthor   = {Martin Scharrer <martin@scharrer-online.de>},
+%   pdftitle    = {The currfile package},
+%   pdfsubject  = {Documentation of LaTeX package 'currfile'},
+%   pdfkeywords = {current filename, filename, file, name, LaTeX, TeX}
+% }%
+% \fi
+% \clearpage
+% \null
+% \vspace*{-2em}
+% \begin{center}
+%   {\LARGE\sffamily The \emph{currfile} Package\\[\medskipamount]}
+%   {\large Martin Scharrer \\[\medskipamount]\normalsize 
+%   \url{martin@scharrer-online.de}\\[.8ex]
+%   \url{http://www.ctan.org/pkg/standalone/}\\[\bigskipamount]}
+%   {\large Version \fileversion\ -- \filedate}\\
+% \end{center}
+% \vspace{1.2em}%
+%
+% \begin{abstract}
+% This small package provides the file name and path information of the current input file as \LaTeX{} macros.
+% \end{abstract}
+%
+% \section{Usage}
+%
+% \DescribeMacro{\currfiledir}
+% \DescribeMacro{\currfilebase}
+% \DescribeMacro{\currfileext}
+% \DescribeMacro{\currfilename}
+% \DescribeMacro{\currfilepath}
+% The directory, base (name without extension), extension (without dot), name (=base+`|.|'+ext) and path (=dir+name) of the current file are provided by these macros.
+% This means that the macros returns the file information of the file they are used in. All macros are fully expanded, i.e.\ only hold
+% text and not further macros.
+% Special care is taken to keep the file information of |\include|d files till the final |\clearpage| command, so that page header and footer of the last page 
+% will hold the correct data.
+%
+% Only files loaded with the \LaTeX{} macros |\input| or |\include| and the main file are taken into account. Files loaded using package macros like |\usepackage| or internal
+% macros \cs{@input} and \cs{@@input} are ignored.
+%
+% More detailed information can be found in the implementation section (\ref{sec:impl}) if required.
+%
+% \StopEventually{}
+%
+%
+% \section{Implementation}\label{sec:impl}
+%
+% \iffalse
+%<*package>
+% \fi
+% \subsection{Options}
+%
+%    \begin{macrocode}
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=currfile,prefix=currfile@}
+\DeclareStringOption[tex]{mainext}
+\DeclareStringOption[]{maindir}
+\ProcessKeyvalOptions*\relax
+%    \end{macrocode}
+%
+%
+% \subsection{File Hooks}
+%
+%    \begin{macrocode}
+\RequirePackage{filehook}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\filehook@prefixwarg\filehook@include@atbegin{%
+  \currfile@push
+  \currfile@set{#1}%
+}
+\filehook@appendwarg\filehook@include@after{%
+  \currfile@pop
+}
+\filehook@prefixwarg\filehook@input@atbegin{%
+  \currfile@push
+  \currfile@set{#1}%
+}
+\filehook@appendwarg\filehook@input@atend{%
+  \currfile@pop
+}
+%    \end{macrocode}
+%
+%
+% \subsection{Set Current Values}
+%
+% \begin{macro}{\currfile@set}
+%    \begin{macrocode}
+\def\currfile@set#1{%
+  \begingroup
+    \filename@parse{#1}%
+    \global\let\currfiledir\filename@area
+    \global\let\currfilebase\filename@base
+    \xdef\currfileext{\ifx\filename@ext\relax tex\else\filename@ext\fi}%
+    \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
+    \xdef\currfilepath{\currfiledir\currfilename}%
+  \endgroup
+%<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
+%<debug> \message{^^JDEBUG: \dindent\empty Entering file '\currfilename' ^^J }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{File Stack}
+%
+% \begin{macro}{\currfile@push}
+%    \begin{macrocode}
+\def\currfile@push{%
+  \xdef\currfile@stack{%
+    {\currfiledir}%
+    {\currfilebase}%
+    {\currfileext}%
+    \currfile@stack
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@pop}
+%    \begin{macrocode}
+\def\currfile@pop{%
+%<debug> \message{^^JDEBUG: \dindent\empty Leaving file '\currfilename' ^^J }%
+  \ifx\currfile@stack\empty
+    \PackageWarning{currfile}{File stack underflow!}{}{}%
+    \global\let\currfile@stack\currfile@stackinit
+  \fi
+  \expandafter\currfile@pop@\currfile@stack\relax
+  \relax\relax\relax
+%<debug> \message{^^JDEBUG: \dindent\empty Restoring file '\currfilename' ^^J }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@pop@}
+%    \begin{macrocode}
+\def\currfile@pop@#1#2#3#4\relax{%
+  \gdef\currfiledir{#1}%
+  \gdef\currfilebase{#2}%
+  \gdef\currfileext{#3}%
+  \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
+  \xdef\currfilepath{\currfiledir\currfilename}%
+  \gdef\currfile@stack{#4}%
+%<debug> \expandafter\expandafter\expandafter\gdef
+%<debug> \expandafter\expandafter\expandafter\dindent
+%<debug> \expandafter\expandafter\expandafter{\expandafter\@gobble\dindent}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@stack}
+% \begin{macro}{\currfile@stackinit}
+% Place |\jobname| values on stack and use this as init value.
+%    \begin{macrocode}
+\def\currfile@stack{}
+\currfile@set{\currfile@maindir\jobname.\currfile@mainext}
+\currfile@push
+\let\currfile@stackinit\currfile@stack
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \iffalse
+%<debug> \def\dindent{}
+% \fi
+%
+% \iffalse
+%</package>
+% \fi
+% \Finale
+\endinput
