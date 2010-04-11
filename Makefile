@@ -1,20 +1,21 @@
+PACKAGE=currfile
 
 all: package doc
 
-package: currfile.sty
+package: ${PACKAGE}.sty
 
-doc: currfile.pdf
+doc: ${PACKAGE}.pdf
 
-currfile.sty: currfile.ins currfile.dtx
+${PACKAGE}.sty: ${PACKAGE}.ins ${PACKAGE}.dtx
 	pdflatex $<
 
-currfile.pdf: currfile.dtx currfile.sty
+${PACKAGE}.pdf: ${PACKAGE}.dtx ${PACKAGE}.sty
 	latexmk -pdf $<
 
-ctanify: currfile.dtx currfile.ins currfile.pdf README Makefile
-	-pdfopt currfile.pdf temp.pdf && ${MV} temp.pdf currfile.pdf
+ctanify: ${PACKAGE}.dtx ${PACKAGE}.ins ${PACKAGE}.pdf README Makefile
+	-pdfopt ${PACKAGE}.pdf temp.pdf && ${MV} temp.pdf ${PACKAGE}.pdf
 	ctanify $^
 
 clean:
-	latexmk -C currfile.dtx
+	latexmk -C ${PACKAGE}.dtx
 
