@@ -19,7 +19,7 @@
 %% This work consists of the files currfile.dtx, currfile.ins
 %% and the derived file currfile.sty.
 %%
-%% $Id: standalone.dtx 1803 2010-04-03 13:59:44Z martin $
+%% $Id$
 % \fi
 %
 % \iffalse
@@ -36,6 +36,7 @@
 \documentclass{ltxdoc}
 \usepackage{currfile}[2010/04/08]
 \usepackage{ifpdf}
+\usepackage{booktabs}
 \usepackage{hyperref}
 \EnableCrossrefs
 \CodelineIndex
@@ -89,7 +90,7 @@
 %   {\LARGE\sffamily The \emph{currfile} Package\\[\medskipamount]}
 %   {\large Martin Scharrer \\[\medskipamount]\normalsize 
 %   \url{martin@scharrer-online.de}\\[.8ex]
-%   \url{http://www.ctan.org/pkg/standalone/}\\[\bigskipamount]}
+%   \url{http://www.ctan.org/pkg/currfile/}\\[\bigskipamount]}
 %   {\large Version \fileversion\ -- \filedate}\\
 % \end{center}
 % \vspace{1.2em}%
@@ -124,7 +125,26 @@
 % \section{Similar Packages}
 % The |fink| package (\emph{fi}le \emph{n}ame \emph{k}eeper) provides a similar functionality. It has inspired this package in several points (e.g.\ package
 % options). However, it does not exclude package and other preamble files and does not take care to change the filename \emph{after} the |\clearpage| of
-% |\include|.
+% |\include|. Table~\ref{tab:fink} compares the related macros of both packages.
+%
+% \begin{table}
+% \belowcaptionskip=\abovecaptionskip
+% \abovecaptionskip=0pt
+% \caption{Conversion from \texttt{fink} package to \texttt{currfile}.}
+% \label{tab:fink}
+% \centering
+% \begin{tabular}{lll}
+%   \toprule
+%    \texttt{fink}  &  \texttt{currfile} &  Example Result \\
+%   \midrule
+%      \cs{finkdir}  &  \cs{currfiledir}  & \ttfamily\currfiledir  \\
+%      \cs{finkbase} &  \cs{currfilebase} & \ttfamily\currfilebase \\
+%      \cs{finkext}  &  \cs{currfileext}  & \ttfamily\currfileext  \\
+%      \cs{finkfile} &  \cs{currfilename} & \ttfamily\currfilename \\
+%      \cs{finkpath} &  \cs{currfilepath} & \ttfamily\currfilepath \\
+%   \bottomrule
+% \end{tabular}
+% \end{table}
 %
 % \StopEventually{}
 %
