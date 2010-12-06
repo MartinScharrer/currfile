@@ -1,0 +1,37 @@
+%&pdflatex
+\documentclass{article}
+
+\usepackage{fink}
+\usepackage{currfile}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\chead{\currfilename (\finkfile)}
+
+\usepackage{lipsum}
+
+\begin{document}
+Mainfile: \currfilename (\finkfile)
+
+before input
+
+\input{input}
+
+after input
+
+
+before input
+
+\InputIfFileExists{ifexists}
+
+after input
+
+
+before incluce
+
+\include{include}
+
+after include
+
+\end{document}
+
