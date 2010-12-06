@@ -29,7 +29,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{currfile}
 %<*package>
-    [2010/04/08 v0.1 Current input file name and path]
+    [2010/12/06 v0.2 Current input file name and path]
 %</package>
 %
 %<*driver>
@@ -112,20 +112,27 @@
 % Special care is taken to keep the file information of |\include|d files till the final |\clearpage| command, so that page header and footer of the last page 
 % will hold the correct data.
 %
-% Only files loaded with the \LaTeX{} macros |\input| or |\include| and the main file are taken into account. Files loaded using package macros like |\usepackage| or internal
-% macros \cs{@input} and \cs{@@input} are ignored.
+% Since v0.2 all files are are taken into account, i.e.\ files read using |\input|, |\include|, |\InputIfFileExists|, |\usepackage|, |\RequirePackage| and even
+% |\LoadClass| and similar macros. Before v0.2 only |\input| or |\include| and the main file were taken into account.
 %
-% More detailed information can be found in the implementation section (\ref{sec:impl}) if required.
+% This package uses the |filehook| package written by the same author. See there for possible incompatibilities with classes or other packages.
+%
+% More detailed information can be found in the implementation section \ref{sec:impl} if required.
 %
 % \subsection*{Package Options}
 % The package provides two options |mainext| and |maindir| which can be used to provide the extension and directory of the main file.
 % This is required if the above macros should be used for the main file itself and if this does has a file extension other than `|.tex|' (e.g.\ a |.dtx| file)
-% or is not located in the current directory.
+% or is not located in the current directory. To provide support for the macros defined by the |fink| package (see section~\ref{sec:fink}) a |fink| option exists.
 %
-% \section{Similar Packages}
+% \section{Compatibility with the \texttt{fink} package}\label{sec:fink}
 % The |fink| package (\emph{fi}le \emph{n}ame \emph{k}eeper) provides a similar functionality. It has inspired this package in several points (e.g.\ package
 % options). However, it does not exclude package and other preamble files and does not take care to change the filename \emph{after} the |\clearpage| of
-% |\include|. Table~\ref{tab:fink} compares the related macros of both packages.
+% |\include|. The author of \texttt{fink} is now discontinuing it in favour of this package.
+% Existing documents which use |fink| should either rename the related macros as shown by Table~\ref{tab:fink} or use the |fink| option of |currfile| which defines
+% the |fink| macros to use the |currfile| ones.
+%
+% Because both packages do basically the same thing, especially patch the same macros, there are incompatible and should not be loaded both.
+% In consent with the |fink| package author this package will undo most of the |fink| code if it was already loaded or prevent it from being loaded afterwards.
 %
 % \begin{table}
 % \belowcaptionskip=\abovecaptionskip
@@ -167,7 +174,7 @@
 %
 % \subsection{File Hooks}
 % The \pkg{filehook} package is used to execute the macros at the correct places.
-% The internal, not user, interface is used to make sure that the file names are valid for all other hooks.
+% The internal interface, not the user-interface, is used to make sure that the file names are valid for all other hooks.
 %
 %    \begin{macrocode}
 \RequirePackage{filehook}
@@ -181,11 +188,11 @@
 \filehook@appendwarg\filehook@include@after{%
   \currfile@pop
 }
-\filehook@prefixwarg\filehook@input@atbegin{%
+\filehook@prefixwarg\filehook@atbegin{%
   \currfile@push
   \currfile@set{#1}%
 }
-\filehook@appendwarg\filehook@input@atend{%
+\filehook@appendwarg\filehook@atend{%
   \currfile@pop
 }
 %    \end{macrocode}
