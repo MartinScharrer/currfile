@@ -2,7 +2,8 @@
 \documentclass{article}
 
 \usepackage{fink}
-\usepackage{currfile}
+\usepackage[fink=false]{currfile}
+%\show\finkfile
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -10,6 +11,8 @@
 
 \usepackage{lipsum}
 
+\listfiles
+\providecommand\finkfile{}
 \begin{document}
 Mainfile: \currfilename (\finkfile)
 
@@ -22,12 +25,12 @@ after input
 
 before input
 
-\InputIfFileExists{ifexists}
+\InputIfFileExists{ifexists}{}{}
 
 after input
 
 
-before incluce
+before include
 
 \include{include}
 

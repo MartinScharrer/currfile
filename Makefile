@@ -7,7 +7,7 @@ package: ${PACKAGE}.sty
 doc: ${PACKAGE}.pdf
 
 ${PACKAGE}.sty: ${PACKAGE}.ins ${PACKAGE}.dtx
-	pdflatex $<
+	yes | pdflatex $<
 
 ${PACKAGE}.pdf: ${PACKAGE}.dtx ${PACKAGE}.sty
 	latexmk -pdf $<
