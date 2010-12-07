@@ -166,9 +166,30 @@
 %    \begin{macrocode}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=currfile,prefix=currfile@}
-\DeclareStringOption[tex]{mainext}
-\DeclareStringOption[]{maindir}
+
+\@ifl@aded{\@pkgextension}{fink}{%
+    \DeclareStringOption[\fnk@mainext]{mainext}%
+    \DeclareStringOption[\fnk@maindir]{maindir}%
+    \DeclareBoolOption[true]{fink}%
+    \PackageWarning{currfile}{Package 'fink' detected. %
+      The 'fink' option will default to 'true'. %
+      If set to 'false' no 'fink' macros will be changed but they will stop
+      working correctly!}{}{}{}%
+}{%
+    \DeclareStringOption[tex]{mainext}%
+    \DeclareStringOption[\@currdir]{maindir}%
+    \DeclareBoolOption[false]{fink}%
+}%
 \ProcessKeyvalOptions*\relax
+
+\begingroup
+\xdef\currfile@mainext{\currfile@mainext}%
+\xdef\currfile@maindir{\currfile@maindir}%
+\def\@tempa{./}%
+\ifx\@tempa\currfile@maindir
+    \global\let\currfile@maindir\empty
+\fi
+\endgroup
 %    \end{macrocode}
 %
 %
@@ -284,6 +305,43 @@
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
+%
+%
+% \subsection{Fink Macros}
+%
+% The |fink| option defines all |fink| package macros to use the ones provided
+% by this package. If the |fink| package was loaded beforehand the restoration
+% of these macros must be avoided at the end of this file
+% (|fink|s |\InputIfFileExists| was then used to load this package).
+% If the package was not loaded its version is set to a dummy value and its
+% options to this package options. If |fink| is attempted to be loaded later
+% it will trigger an package option clash if different option are used.
+% Otherwise it will be taken as already loaded and not loaded ``again''.
+%
+%    \begin{macrocode}
+\ifcurrfile@fink
+    \def\finkfile{\currfilename}%
+    \def\finkdir{\currfiledir}%
+    \def\finkpath{\currfilepath}%
+    \def\finkbase{\currfilebase}%
+    \def\finkext{\currfileext}%
+    \@ifl@aded{\@pkgextension}{fink}{%
+        \def\fink@restore#1{}%
+    }{%
+        \@namedef{ver@fink.sty}{2010/12/06}%
+        \expandafter\edef\csname opt@fink.sty\endcsname{%
+            maindir=\currfile@maindir,mainext=\currfile@mainext
+        }%
+    }%
+\else
+    \@ifl@aded{\@pkgextension}{fink}{}{%
+        \AtBeginOfFile{fink.sty}{%
+            \PackageError{currfile}{Package class with deprecated 'fink'. %
+             Load 'currfile' with the 'fink' option or see the upgrade guide in the manual}{}{}{}%
+        }%
+    }%
+\fi
+%    \end{macrocode}
 %
 % \iffalse
 %</package>
