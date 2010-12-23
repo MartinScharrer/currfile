@@ -33,7 +33,7 @@
 %</package>
 %
 %<*driver>
-\documentclass{ltxdoc}
+\documentclass{ydoc}
 \usepackage{currfile}[2010/04/08]
 \usepackage{ifpdf}
 \usepackage{booktabs}
@@ -42,6 +42,8 @@
 \CodelineIndex
 \RecordChanges
 \providecommand*\pkg{\texttt}
+\providecommand*\opt{\texttt}
+\let\cs\Macro
 \begin{document}
   \DocInput{currfile.dtx}
   \PrintChanges
@@ -50,7 +52,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{209}
+% \CheckSum{208}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -117,30 +119,30 @@
 % The directory, base (name without extension), extension (without dot), name (=base+`|.|'+ext) and path (=dir+name) of the current file are provided by these macros.
 % This means that the macros returns the file information of the file they are used in. All macros are fully expanded, i.e.\ only hold
 % text and not further macros.
-% Special care is taken to keep the file information of |\include|d files till the final |\clearpage| command, so that page header and footer of the last page 
+% Special care is taken to keep the file information of \Macro\included files till the final \Macro\clearpage command, so that page header and footer of the last page 
 % will hold the correct data.
 %
-% Since v0.2 all files are are taken into account, i.e.\ files read using |\input|, |\include|, |\InputIfFileExists|, |\usepackage|, |\RequirePackage| and even
-% |\LoadClass| and similar macros. Before v0.2 only |\input| or |\include| and the main file were taken into account.
+% Since v0.2 all files are are taken into account, i.e.\ files read using \Macro\input, \Macro\include, \Macro\InputIfFileExists, \Macro\usepackage, \Macro\RequirePackage and even
+% \Macro\LoadClass and similar macros. Before v0.2 only \Macro\input or \Macro\include and the main file were taken into account.
 %
-% This package uses the |filehook| package written by the same author. See there for possible incompatibilities with classes or other packages.
+% This package uses the \pkg{filehook} package written by the same author. See there for possible incompatibilities with classes or other packages.
 %
 % More detailed information can be found in the implementation section \ref{sec:impl} if required.
 %
 % \subsection*{Package Options}
-% The package provides two options |mainext| and |maindir| which can be used to provide the extension and directory of the main file.
+% The package provides two options \opt{mainext} and \opt{maindir} which can be used to provide the extension and directory of the main file.
 % This is required if the above macros should be used for the main file itself and if this does has a file extension other than `|.tex|' (e.g.\ a |.dtx| file)
-% or is not located in the current directory. To provide support for the macros defined by the |fink| package (see section~\ref{sec:fink}) a |fink| option exists.
+% or is not located in the current directory. To provide support for the macros defined by the \pkg{fink} package (see section~\ref{sec:fink}) a \pkg{fink} option exists.
 %
 % \section{Compatibility with the \texttt{fink} package}\label{sec:fink}
-% The |fink| package (\emph{fi}le \emph{n}ame \emph{k}eeper) provides a similar functionality. It has inspired this package in several points (e.g.\ package
-% options). However, it does not exclude package and other preamble files and does not take care to change the filename \emph{after} the |\clearpage| of
-% |\include|. The author of \texttt{fink} is now discontinuing it in favour of this package.
-% Existing documents which use |fink| should either rename the related macros as shown by Table~\ref{tab:fink} or use the |fink| option of |currfile| which defines
-% the |fink| macros to use the |currfile| ones.
+% The \pkg{fink} package (\emph{fi}le \emph{n}ame \emph{k}eeper) provides a similar functionality. It has inspired this package in several points (e.g.\ package
+% options). However, it does not exclude package and other preamble files and does not take care to change the filename \emph{after} the \Macro\clearpage of
+% \Macro\include. The author of \texttt{fink} is now discontinuing it in favour of this package.
+% Existing documents which use \pkg{fink} should either rename the related macros as shown by Table~\ref{tab:fink} or use the \pkg{fink} option of \pkg{currfile} which defines
+% the \pkg{fink} macros to use the \pkg{currfile} ones.
 %
-% Because both packages do basically the same thing, especially patch the same macros, there are incompatible and should not be loaded both.
-% In consent with the |fink| package author this package will undo most of the |fink| code if it was already loaded or prevent it from being loaded afterwards.
+% Because both packages do basically the same thing, especially patch the same macros, there are incompatible and should not be loaded at the same time.
+% In consent with the \pkg{fink} package author this package will undo most of the \pkg{fink} code if it was already loaded or prevent it from being loaded afterwards.
 %
 % \begin{table}
 % \belowcaptionskip=\abovecaptionskip
@@ -175,7 +177,7 @@
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=currfile,prefix=currfile@}
 
-\@ifl@aded{\@pkgextension}{fink}{%
+\@ifpackageloaded{fink}{%
     \DeclareStringOption[\fnk@mainext]{mainext}%
     \DeclareStringOption[\fnk@maindir]{maindir}%
     \DeclareBoolOption[true]{fink}%
@@ -230,7 +232,7 @@
 % \subsection{Set Current Values}
 %
 % \begin{macro}{\currfile@set}
-% Sets the file information which are parsed by \LaTeX's |\filename@parse|.
+% Sets the file information which are parsed by \LaTeX's \Macro\filename@parse.
 %    \begin{macrocode}
 \def\currfile@set#1{%
   \begingroup
@@ -304,7 +306,7 @@
 %
 % \begin{macro}{\currfile@stack}
 % \begin{macro}{\currfile@stackinit}
-% Place |\jobname| values on stack and use this as init value.
+% Place \Macro\jobname values on stack and use this as init value.
 %    \begin{macrocode}
 \def\currfile@stack{}
 \currfile@set{\currfile@maindir\jobname.\currfile@mainext}
@@ -317,12 +319,12 @@
 %
 % \subsection{Fink Macros}
 %
-% The |fink| option defines all |fink| package macros to use the ones provided
-% by this package. If the |fink| package was loaded beforehand the restoration
+% The \pkg{fink} option defines all \pkg{fink} package macros to use the ones provided
+% by this package. If the \pkg{fink} package was loaded beforehand the restoration
 % of these macros must be avoided at the end of this file
-% (|fink|s |\InputIfFileExists| was then used to load this package).
+% (\pkg{fink}s \Macro\InputIfFileExists was then used to load this package).
 % If the package was not loaded its version is set to a dummy value and its
-% options to this package options. If |fink| is attempted to be loaded later
+% options to this package options. If \pkg{fink} is attempted to be loaded later
 % it will trigger an package option clash if different option are used.
 % Otherwise it will be taken as already loaded and not loaded ``again''.
 %
