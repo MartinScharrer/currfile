@@ -29,12 +29,12 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{currfile}
 %<*package>
-    [2010/12/08 v0.2 Current input file name and path]
+    [2010/12/28 v0.3 Current input file name and path]
 %</package>
 %
 %<*driver>
 \documentclass{ydoc}
-\usepackage{currfile}[2010/04/08]
+\usepackage{currfile}[2010/12/28]
 \usepackage{ifpdf}
 \usepackage{booktabs}
 \usepackage{hyperref}
@@ -52,7 +52,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{208}
+% \CheckSum{201}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -212,18 +212,11 @@
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\filehook@prefixwarg\filehook@include@atbegin{%
+\filehook@prefixwarg\filehook@every@atbegin{%
   \currfile@push
   \currfile@set{#1}%
 }
-\filehook@appendwarg\filehook@include@after{%
-  \currfile@pop
-}
-\filehook@prefixwarg\filehook@atbegin{%
-  \currfile@push
-  \currfile@set{#1}%
-}
-\filehook@appendwarg\filehook@atend{%
+\filehook@appendwarg\filehook@every@atend{%
   \currfile@pop
 }
 %    \end{macrocode}
