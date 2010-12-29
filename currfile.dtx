@@ -52,7 +52,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{201}
+% \CheckSum{200}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -208,15 +208,15 @@
 % The internal interface, not the user-interface, is used to make sure that the file names are valid for all other hooks.
 %
 %    \begin{macrocode}
-\RequirePackage{filehook}
+\RequirePackage{filehook}[2010/12/29]
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\filehook@prefixwarg\filehook@every@atbegin{%
+\filehook@prefix\filehook@every@atbegin{%
   \currfile@push
-  \currfile@set{#1}%
+  \currfile@set{\filehookfilearg}%
 }
-\filehook@appendwarg\filehook@every@atend{%
+\filehook@append\filehook@every@atend{%
   \currfile@pop
 }
 %    \end{macrocode}
@@ -328,7 +328,7 @@
     \def\finkpath{\currfilepath}%
     \def\finkbase{\currfilebase}%
     \def\finkext{\currfileext}%
-    \@ifl@aded{\@pkgextension}{fink}{%
+    \@ifpackageloaded{fink}{%
         \def\fink@restore#1{}%
     }{%
         \@namedef{ver@fink.sty}{2010/12/06}%
@@ -337,9 +337,9 @@
         }%
     }%
 \else
-    \@ifl@aded{\@pkgextension}{fink}{}{%
-        \AtBeginOfFile{fink.sty}{%
-            \PackageError{currfile}{Package class with deprecated 'fink'. %
+    \@ifpackageloaded{fink}{}{%
+        \AtBeginOfPackageFile{fink}{%
+            \PackageError{currfile}{The 'fink' package is now deprecated. %
              Load 'currfile' with the 'fink' option or see the upgrade guide in the manual}{}{}{}%
         }%
     }%
