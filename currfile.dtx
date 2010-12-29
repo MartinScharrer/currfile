@@ -152,7 +152,7 @@
 % \centering
 % \begin{tabular}{lll}
 %   \toprule
-%    \texttt{fink}  &  \texttt{currfile} &  Example Result \\
+%     \texttt{fink}  &  \texttt{currfile} &  Example Result        \\
 %   \midrule
 %      \cs{finkdir}  &  \cs{currfiledir}  & \ttfamily\currfiledir  \\
 %      \cs{finkbase} &  \cs{currfilebase} & \ttfamily\currfilebase \\
@@ -182,9 +182,9 @@
     \DeclareStringOption[\fnk@maindir]{maindir}%
     \DeclareBoolOption[true]{fink}%
     \PackageWarning{currfile}{Package 'fink' detected. %
-      The 'fink' option will default to 'true'. %
+      The 'fink' option will default to 'true'.^^J%
       If set to 'false' no 'fink' macros will be changed but they will stop
-      working correctly!}{}{}{}%
+      working correctly!}%
 }{%
     \DeclareStringOption[tex]{mainext}%
     \DeclareStringOption[\@currdir]{maindir}%
@@ -267,7 +267,7 @@
 \def\currfile@pop{%
 %<debug> \message{^^JDEBUG: \dindent\empty Leaving file '\currfilename' ^^J }%
   \ifx\currfile@stack\empty
-    \PackageWarning{currfile}{File stack underflow!}{}{}%
+    \PackageWarning{currfile}{File stack underflow!}%
     \global\let\currfile@stack\currfile@stackinit
   \fi
   \expandafter\currfile@pop@\currfile@stack\relax
@@ -340,7 +340,7 @@
     \@ifpackageloaded{fink}{}{%
         \AtBeginOfPackageFile{fink}{%
             \PackageError{currfile}{The 'fink' package is now deprecated. %
-             Load 'currfile' with the 'fink' option or see the upgrade guide in the manual}{}{}{}%
+             Load 'currfile' with the 'fink' option or see the upgrade guide in the manual}%
         }%
     }%
 \fi
