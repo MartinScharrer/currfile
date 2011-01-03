@@ -29,12 +29,12 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{currfile}
 %<*package>
-    [2010/12/28 v0.3 Current input file name and path]
+    [2011/01/03 v0.3 Current input file name and path]
 %</package>
 %
 %<*driver>
 \documentclass{ydoc}
-\usepackage{currfile}[2010/12/28]
+\usepackage{currfile}[2011/01/03]
 \usepackage{ifpdf}
 \usepackage{booktabs}
 \usepackage{hyperref}
@@ -52,7 +52,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{200}
+% \CheckSum{201}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -181,7 +181,7 @@
     \DeclareStringOption[\fnk@mainext]{mainext}%
     \DeclareStringOption[\fnk@maindir]{maindir}%
     \DeclareBoolOption[true]{fink}%
-    \PackageWarning{currfile}{Package 'fink' detected. %
+    \PackageWarning{currfile}{Deprecated package 'fink' detected. %
       The 'fink' option will default to 'true'.^^J%
       If set to 'false' no 'fink' macros will be changed but they will stop
       working correctly!}%
@@ -190,6 +190,7 @@
     \DeclareStringOption[\@currdir]{maindir}%
     \DeclareBoolOption[false]{fink}%
 }%
+\DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
 \ProcessKeyvalOptions*\relax
 
 \begingroup
@@ -212,11 +213,11 @@
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\filehook@prefix\filehook@every@atbegin{%
+\filehook@prefixwarg\filehook@every@atbegin{%
   \currfile@push
-  \currfile@set{\filehookfilearg}%
+  \currfile@set{#1}%
 }
-\filehook@append\filehook@every@atend{%
+\filehook@appendwarg\filehook@every@atend{%
   \currfile@pop
 }
 %    \end{macrocode}
