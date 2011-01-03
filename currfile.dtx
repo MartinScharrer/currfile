@@ -1,5 +1,5 @@
 % \iffalse meta-comment
-%% Copyright (c) 2010 by Martin Scharrer <martin@scharrer-online.de>
+%% Copyright (c) 2010-2011 by Martin Scharrer <martin@scharrer-online.de>
 %% -----------------------------------------------------------------
 %%
 %% This work may be distributed and/or modified under the
@@ -75,6 +75,7 @@
 % \changes{v0.2}{2010/04/10}{Now work for all files, not only for \cs{input} and \cs{include} files.
 %  Added package option 'fink' to define the same macros as the 'fink' package.
 % }
+% \changes{v0.3}{2011/01/03}{Update to use new version of filehook.}
 %
 % \GetFileInfo{currfile.dtx}
 %
@@ -191,7 +192,7 @@
     \DeclareBoolOption[false]{fink}%
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
-\RequirePackage{filehook}[2010/12/29]
+\RequirePackage{filehook}[2011/01/03]
 \ProcessKeyvalOptions*\relax
 
 \begingroup
@@ -331,7 +332,7 @@
     \@ifpackageloaded{fink}{%
         \def\fink@restore#1{}%
     }{%
-        \@namedef{ver@fink.sty}{2010/12/06}%
+        \@namedef{ver@fink.sty}{2011/01/03}%
         \expandafter\edef\csname opt@fink.sty\endcsname{%
             maindir=\currfile@maindir,mainext=\currfile@mainext
         }%
