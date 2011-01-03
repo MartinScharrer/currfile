@@ -191,6 +191,7 @@
     \DeclareBoolOption[false]{fink}%
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
+\RequirePackage{filehook}[2010/12/29]
 \ProcessKeyvalOptions*\relax
 
 \begingroup
@@ -206,11 +207,9 @@
 %
 % \subsection{File Hooks}
 % The \pkg{filehook} package is used to execute the macros at the correct places.
+% However it must be loaded before the option processed because the |fink| compatibility
+% code in |filehook-fink| will modify the option list.
 % The internal interface, not the user-interface, is used to make sure that the file names are valid for all other hooks.
-%
-%    \begin{macrocode}
-\RequirePackage{filehook}[2010/12/29]
-%    \end{macrocode}
 %
 %    \begin{macrocode}
 \filehook@prefixwarg\filehook@every@atbegin{%
