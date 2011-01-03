@@ -21,8 +21,12 @@ ctanify: ${PACKAGE}.dtx ${PACKAGE}.ins ${PACKAGE}.pdf README Makefile
 	-pdfopt ${PACKAGE}.pdf temp.pdf && ${MV} temp.pdf ${PACKAGE}.pdf
 	ctanify $^
 
+fullclean: clean
+	rm ${PACKAGE}.pdf
+
 clean:
 	latexmk -C ${PACKAGE}.dtx
+	@rm -f ${PACKAGE}.cod ${PACKAGE}.glo ${PACKAGE}.gls ${PACKAGE}.sty ${PACKAGE}.log ${PACKAGE}.aux
 
 install: package doc
 	-@mkdir ${HOME}/texmf/tex/latex/currfile/ 2>/dev/null || true
