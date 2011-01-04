@@ -135,6 +135,12 @@
 % This is required if the above macros should be used for the main file itself and if this does has a file extension other than `|.tex|' (e.g.\ a |.dtx| file)
 % or is not located in the current directory. To provide support for the macros defined by the \pkg{fink} package (see section~\ref{sec:fink}) a \pkg{fink} option exists.
 %
+% \section{Usage inside file hooks}
+% This package uses the `EveryFile' hooks of the \pkg{filehook} package to update its macros.
+% Special care is taken to do this in a way so that the macros can be used safely inside other hook code, including other `EveryFile' hooks.
+% Please note that the `AtEndOfPackageFile' and `AtEndOfClassFile' hooks are executed after `AtEndOfEveryFile'
+% and therefore the |currfile| macros will hold the values of the parent file, not of that package or class file.
+%
 % \section{Compatibility with the \texttt{fink} package}\label{sec:fink}
 % The \pkg{fink} package (\emph{fi}le \emph{n}ame \emph{k}eeper) provides a similar functionality. It has inspired this package in several points (e.g.\ package
 % options). However, it does not exclude package and other preamble files and does not take care to change the filename \emph{after} the \Macro\clearpage of
