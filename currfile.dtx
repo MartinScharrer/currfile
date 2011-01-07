@@ -29,7 +29,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{currfile}
 %<*package>
-    [2011/01/03 v0.3 Current input file name and path]
+    [2011/01/07 v0.4 Current input file name and path]
 %</package>
 %
 %<*driver>
@@ -52,7 +52,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{201}
+% \CheckSum{245}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -76,6 +76,7 @@
 %  Added package option 'fink' to define the same macros as the 'fink' package.
 % }
 % \changes{v0.3}{2011/01/03}{Update to use new version of filehook.}
+% \changes{v0.4}{2011/01/07}{Added if-macros and sanitized currfile macros.}
 %
 % \GetFileInfo{currfile.dtx}
 %
@@ -119,16 +120,28 @@
 % \DescribeMacro{\currfilepath}
 % The directory, base (name without extension), extension (without dot), name (=base+`|.|'+ext) and path (=dir+name) of the current file are provided by these macros.
 % This means that the macros returns the file information of the file they are used in. All macros are fully expanded, i.e.\ only hold
-% text and not further macros.
+% text and not further macros. They are also ``sanitized'' to ensure that all characters, especially special ones like `|_|', are taken verbatim.
+% However this special characters might not be displayed correctly in all fonts. A good font is text-type (\Macro\ttfamily, \Macro\texttt{\ldots}),
+% but other fonts can be used using the \pkg{url} package, e.g.: |\urlstyle{rm}\expandafter\nolinkurl\expandafter{\currfilename}|.
+%
 % Special care is taken to keep the file information of \Macro\included files till the final \Macro\clearpage command, so that page header and footer of the last page 
 % will hold the correct data.
 %
 % Since v0.2 all files are are taken into account, i.e.\ files read using \Macro\input, \Macro\include, \Macro\InputIfFileExists, \Macro\usepackage, \Macro\RequirePackage and even
 % \Macro\LoadClass and similar macros. Before v0.2 only \Macro\input or \Macro\include and the main file were taken into account.
 %
+%
 % This package uses the \pkg{filehook} package written by the same author. See there for possible incompatibilities with classes or other packages.
 %
 % More detailed information can be found in the implementation section \ref{sec:impl} if required.
+%
+% \DescribeMacro{\ifcurrfiledir}{<text>}{<true>}{<false>}
+% \DescribeMacro{\ifcurrfilebase}{<text>}{<true>}{<false>}
+% \DescribeMacro{\ifcurrfileext}{<text>}{<true>}{<false>}
+% \DescribeMacro{\ifcurrfilename}{<text>}{<true>}{<false>}
+% \DescribeMacro{\ifcurrfilepath}{<text>}{<true>}{<false>}
+% This\marginpar{\raggedright New in v0.4 from 2011/01/07} if-macros allow the comparison of \meta{text} with the current file directory, base, extension, name and path, respectively.
+% The \meta{text} is fully expanded and sanitized for the comparison.
 %
 % \subsection*{Package Options}
 % The package provides two options \opt{mainext} and \opt{maindir} which can be used to provide the extension and directory of the main file.
@@ -236,7 +249,9 @@
 %    \begin{macrocode}
 \def\currfile@set#1{%
   \begingroup
-    \filename@parse{#1}%
+    \edef\@tempa{#1}%
+    \@onelevel@sanitize\@tempa
+    \expandafter\filename@parse\expandafter{\@tempa}%
     \global\let\currfiledir\filename@area
     \global\let\currfilebase\filename@base
     \xdef\currfileext{\ifx\filename@ext\relax tex\else\filename@ext\fi}%
@@ -314,6 +329,57 @@
 \let\currfile@stackinit\currfile@stack
 %    \end{macrocode}
 % \end{macro}
+% \end{macro}
+%
+%
+% \subsection{If Macros}
+% \begin{macro}{\ifcurrfilename}
+%    \begin{macrocode}
+\newcommand*\ifcurrfilename{\currfile@if\currfilename}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfilebase}
+%    \begin{macrocode}
+\newcommand*\ifcurrfilebase{\currfile@if\currfilebase}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfileext}
+%    \begin{macrocode}
+\newcommand*\ifcurrfileext{\currfile@if\currfileext}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfiledir}
+%    \begin{macrocode}
+\newcommand*\ifcurrfiledir{\currfile@if\currfiledir}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfilepath}
+%    \begin{macrocode}
+\newcommand*\ifcurrfilepath{\currfile@if\currfilepath}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@if}[2]{currfile macro to compare}{compare text}
+% Expands the text and sanitize it to ensure correct neutral catcodes.
+% Then it temp macro is compared to the given currfile macro.
+%    \begin{macrocode}
+\def\currfile@if#1#2{%
+    \begingroup
+    \edef\@tempa{#2}%
+    \@onelevel@sanitize\@tempa
+    \ifx\@tempa#1%
+        \endgroup
+        \expandafter\@firstoftwo
+    \else
+        \endgroup
+        \expandafter\@secondoftwo
+    \fi
+}
+%    \end{macrocode}
 % \end{macro}
 %
 %
