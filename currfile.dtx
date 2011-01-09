@@ -29,12 +29,12 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{currfile}
 %<*package>
-    [2011/01/07 v0.4 Current input file name and path]
+    [2011/01/09 v0.4 Current input file name and path]
 %</package>
 %
 %<*driver>
-\documentclass{ydoc}[2011/01/07]
-\usepackage{currfile}[2011/01/07]
+\documentclass{ydoc}[2011/01/09]
+\usepackage{currfile}[2011/01/09]
 \usepackage{ifpdf}
 \usepackage{booktabs}
 \usepackage{hyperref}
@@ -52,7 +52,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{245}
+% \CheckSum{258}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -76,7 +76,7 @@
 %  Added package option 'fink' to define the same macros as the 'fink' package.
 % }
 % \changes{v0.3}{2011/01/03}{Update to use new version of filehook.}
-% \changes{v0.4}{2011/01/07}{Added if-macros and sanitized currfile macros.}
+% \changes{v0.4}{2011/01/09}{Added if-macros and sanitized currfile macros.}
 %
 % \GetFileInfo{currfile.dtx}
 %
@@ -140,8 +140,13 @@
 % \DescribeMacro{\ifcurrfileext}{<text>}{<true>}{<false>}
 % \DescribeMacro{\ifcurrfilename}{<text>}{<true>}{<false>}
 % \DescribeMacro{\ifcurrfilepath}{<text>}{<true>}{<false>}
-% This\marginpar{\raggedright New in v0.4 from 2011/01/07} if-macros allow the comparison of \meta{text} with the current file directory, base, extension, name and path, respectively.
-% The \meta{text} is fully expanded and sanitized for the comparison.
+% This\marginpar{\raggedright New in v0.4 from 2011/01/09} if-macros allow the comparison of \meta{text} with the current file directory, base, extension, name and path, respectively.
+% The \meta{text} is fully expanded and sanitized for the comparison. Example: |\ifcurrfileext{cfg}{I'm in a config file}{No config file!}|
+%
+% \DescribeMacro{\ifcurrfile}{<currfile macro or text>}{<text>}{<true>}{<false>}
+% Compares the given \meta{currfile macro or text} with \meta{text}. Both are taken as file name parts and are fully expanded and sanitized before the comparison.
+% This general macro is a little slower then the specialised macros above but might be useful to compare different file names/paths where non of the two is the current file.
+% Note that the all comparisons are done insensitive to the catcodes of the texts, which is what users want. Different comparision macros (|\ifx|, \pkg{ifthenelse}) might not do this.
 %
 % \subsection*{Package Options}
 % The package provides two options \opt{mainext} and \opt{maindir} which can be used to provide the extension and directory of the main file.
@@ -211,7 +216,7 @@
     \DeclareBoolOption[false]{fink}%
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
-\RequirePackage{filehook}[2011/01/03]
+\RequirePackage{filehook}[2011/01/09]
 \ProcessKeyvalOptions*\relax
 
 \begingroup
@@ -335,31 +340,44 @@
 % \subsection{If Macros}
 % \begin{macro}{\ifcurrfilename}
 %    \begin{macrocode}
-\newcommand*\ifcurrfilename{\currfile@if\currfilename}
+\newcommand*\ifcurrfilename{\begingroup\currfile@if\currfilename}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\ifcurrfilebase}
 %    \begin{macrocode}
-\newcommand*\ifcurrfilebase{\currfile@if\currfilebase}
+\newcommand*\ifcurrfilebase{\begingroup\currfile@if\currfilebase}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\ifcurrfileext}
 %    \begin{macrocode}
-\newcommand*\ifcurrfileext{\currfile@if\currfileext}
+\newcommand*\ifcurrfileext{\begingroup\currfile@if\currfileext}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\ifcurrfiledir}
 %    \begin{macrocode}
-\newcommand*\ifcurrfiledir{\currfile@if\currfiledir}
+\newcommand*\ifcurrfiledir{\begingroup\currfile@if\currfiledir}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\ifcurrfilepath}
 %    \begin{macrocode}
-\newcommand*\ifcurrfilepath{\currfile@if\currfilepath}
+\newcommand*\ifcurrfilepath{\begingroup\currfile@if\currfilepath}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfile}[1]{currfile macro or text}
+% Expands and sanitizes the first argument and then calls the internal if-macro
+% with the result.
+%    \begin{macrocode}
+\newcommand*\ifcurrfile[1]{%
+    \begingroup
+    \edef\@tempb{#1}%
+    \@onelevel@sanitize\@tempb
+    \currfile@if\@tempb
+}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -368,7 +386,6 @@
 % Then it temp macro is compared to the given currfile macro.
 %    \begin{macrocode}
 \def\currfile@if#1#2{%
-    \begingroup
     \edef\@tempa{#2}%
     \@onelevel@sanitize\@tempa
     \ifx\@tempa#1%
@@ -404,7 +421,7 @@
     \@ifpackageloaded{fink}{%
         \def\fink@restore#1{}%
     }{%
-        \@namedef{ver@fink.sty}{2011/01/03}%
+        \@namedef{ver@fink.sty}{2011/01/09}%
         \expandafter\edef\csname opt@fink.sty\endcsname{%
             maindir=\currfile@maindir,mainext=\currfile@mainext
         }%
