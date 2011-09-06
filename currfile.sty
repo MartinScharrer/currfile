@@ -1,0 +1,248 @@
+%
+% \subsection{Package header}
+%
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{currfile}[2011/01/09 v0.4 Current input file name and path]
+%    \begin{macrocode}
+%
+% \subsection{Options}
+%
+%    \begin{macrocode}
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=currfile,prefix=currfile@}
+
+\@ifpackageloaded{fink}{%
+    \DeclareStringOption[\fnk@mainext]{mainext}%
+    \DeclareStringOption[\fnk@maindir]{maindir}%
+    \DeclareBoolOption[true]{fink}%
+    \PackageWarning{currfile}{Deprecated package 'fink' detected. %
+      The 'fink' option will default to 'true'.^^J%
+      If set to 'false' no 'fink' macros will be changed but they will stop
+      working correctly!}%
+}{%
+    \DeclareStringOption[tex]{mainext}%
+    \DeclareStringOption[\@currdir]{maindir}%
+    \DeclareBoolOption[false]{fink}%
+}%
+\DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
+\RequirePackage{filehook}[2011/01/09]
+\ProcessKeyvalOptions*\relax
+
+\begingroup
+\xdef\currfile@mainext{\currfile@mainext}%
+\xdef\currfile@maindir{\currfile@maindir}%
+\def\@tempa{./}%
+\ifx\@tempa\currfile@maindir
+    \global\let\currfile@maindir\empty
+\fi
+\endgroup
+%    \end{macrocode}
+%
+%
+% \subsection{File Hooks}
+% The \pkg{filehook} package is used to execute the macros at the correct places.
+% However it must be loaded before the option processed because the |fink| compatibility
+% code in |filehook-fink| will modify the option list.
+% The internal interface, not the user-interface, is used to make sure that the file names are valid for all other hooks.
+%
+%    \begin{macrocode}
+\filehook@prefixwarg\filehook@every@atbegin{%
+  \currfile@push
+  \currfile@set{#1}%
+}
+\filehook@appendwarg\filehook@every@atend{%
+  \currfile@pop
+}
+%    \end{macrocode}
+%
+%
+% \subsection{Set Current Values}
+%
+% \begin{macro}{\currfile@set}
+% Sets the file information which are parsed by \LaTeX's \Macro\filename@parse.
+%    \begin{macrocode}
+\def\currfile@set#1{%
+  \begingroup
+    \edef\@tempa{#1}%
+    \@onelevel@sanitize\@tempa
+    \expandafter\filename@parse\expandafter{\@tempa}%
+    \global\let\currfiledir\filename@area
+    \global\let\currfilebase\filename@base
+    \xdef\currfileext{\ifx\filename@ext\relax tex\else\filename@ext\fi}%
+    \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
+    \xdef\currfilepath{\currfiledir\currfilename}%
+  \endgroup
+%<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
+%<debug> \message{^^JDEBUG: \dindent\empty Entering file '\currfilename' ^^J }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{File Stack}
+% The file information are pushed and popped on a stack to save and restore them when
+% entering and leaving a sub-file, respectively. This is quite similar to the way 
+% \LaTeX\ saves file base names and extension as well as the `@' status (letter or other) for
+% package and class files.
+%
+% \begin{macro}{\currfile@push}
+%    \begin{macrocode}
+\def\currfile@push{%
+  \xdef\currfile@stack{%
+    {\currfiledir}%
+    {\currfilebase}%
+    {\currfileext}%
+    \currfile@stack
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@pop}
+%    \begin{macrocode}
+\def\currfile@pop{%
+%<debug> \message{^^JDEBUG: \dindent\empty Leaving file '\currfilename' ^^J }%
+  \ifx\currfile@stack\empty
+    \PackageWarning{currfile}{File stack underflow!}%
+    \global\let\currfile@stack\currfile@stackinit
+  \fi
+  \expandafter\currfile@pop@\currfile@stack\relax
+  \relax\relax\relax
+%<debug> \message{^^JDEBUG: \dindent\empty Restoring file '\currfilename' ^^J }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@pop@}
+%    \begin{macrocode}
+\def\currfile@pop@#1#2#3#4\relax{%
+  \gdef\currfiledir{#1}%
+  \gdef\currfilebase{#2}%
+  \gdef\currfileext{#3}%
+  \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
+  \xdef\currfilepath{\currfiledir\currfilename}%
+  \gdef\currfile@stack{#4}%
+%<debug> \expandafter\expandafter\expandafter\gdef
+%<debug> \expandafter\expandafter\expandafter\dindent
+%<debug> \expandafter\expandafter\expandafter{\expandafter\@gobble\dindent}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \iffalse
+%<debug> \def\dindent{}
+% \fi
+%
+% \begin{macro}{\currfile@stack}
+% \begin{macro}{\currfile@stackinit}
+% Place \Macro\jobname values on stack and use this as init value.
+%    \begin{macrocode}
+\def\currfile@stack{}
+\currfile@set{\currfile@maindir\jobname.\currfile@mainext}
+\currfile@push
+\let\currfile@stackinit\currfile@stack
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+%
+% \subsection{If Macros}
+% \begin{macro}{\ifcurrfilename}
+%    \begin{macrocode}
+\newcommand*\ifcurrfilename{\begingroup\currfile@if\currfilename}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfilebase}
+%    \begin{macrocode}
+\newcommand*\ifcurrfilebase{\begingroup\currfile@if\currfilebase}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfileext}
+%    \begin{macrocode}
+\newcommand*\ifcurrfileext{\begingroup\currfile@if\currfileext}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfiledir}
+%    \begin{macrocode}
+\newcommand*\ifcurrfiledir{\begingroup\currfile@if\currfiledir}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfilepath}
+%    \begin{macrocode}
+\newcommand*\ifcurrfilepath{\begingroup\currfile@if\currfilepath}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfile}[1]{currfile macro or text}
+% Expands and sanitizes the first argument and then calls the internal if-macro
+% with the result.
+%    \begin{macrocode}
+\newcommand*\ifcurrfile[1]{%
+    \begingroup
+    \edef\@tempb{#1}%
+    \@onelevel@sanitize\@tempb
+    \currfile@if\@tempb
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@if}[2]{currfile macro to compare}{compare text}
+% Expands the text and sanitize it to ensure correct neutral catcodes.
+% Then it temp macro is compared to the given currfile macro.
+%    \begin{macrocode}
+\def\currfile@if#1#2{%
+    \edef\@tempa{#2}%
+    \@onelevel@sanitize\@tempa
+    \ifx\@tempa#1%
+        \endgroup
+        \expandafter\@firstoftwo
+    \else
+        \endgroup
+        \expandafter\@secondoftwo
+    \fi
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{Fink Macros}
+%
+% The \pkg{fink} option defines all \pkg{fink} package macros to use the ones provided
+% by this package. If the \pkg{fink} package was loaded beforehand the restoration
+% of these macros must be avoided at the end of this file
+% (\pkg{fink}s \Macro\InputIfFileExists was then used to load this package).
+% If the package was not loaded its version is set to a dummy value and its
+% options to this package options. If \pkg{fink} is attempted to be loaded later
+% it will trigger an package option clash if different option are used.
+% Otherwise it will be taken as already loaded and not loaded ``again''.
+%
+%    \begin{macrocode}
+\ifcurrfile@fink
+    \def\finkfile{\currfilename}%
+    \def\finkdir{\currfiledir}%
+    \def\finkpath{\currfilepath}%
+    \def\finkbase{\currfilebase}%
+    \def\finkext{\currfileext}%
+    \@ifpackageloaded{fink}{%
+        \def\fink@restore#1{}%
+    }{%
+        \@namedef{ver@fink.sty}{2011/01/09}%
+        \expandafter\edef\csname opt@fink.sty\endcsname{%
+            maindir=\currfile@maindir,mainext=\currfile@mainext
+        }%
+    }%
+\else
+    \@ifpackageloaded{fink}{}{%
+        \AtBeginOfPackageFile{fink}{%
+            \PackageError{currfile}{The 'fink' package is now deprecated. %
+             Load 'currfile' with the 'fink' option or see the upgrade guide in the manual}{}%
+        }%
+    }%
+\fi
+%    \end{macrocode}
+%
