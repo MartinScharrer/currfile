@@ -40,7 +40,7 @@ build:
 clean:
 	latexmk -C ${CONTRIBUTION}.dtx
 	@${RM} ${CONTRIBUTION}.cod ${CONTRIBUTION}.glo ${CONTRIBUTION}.gls ${CONTRIBUTION}.exa ${CONTRIBUTION}.log ${CONTRIBUTION}.aux
-	${RM} -r build
+	${RM} -r build ${FILE}
 
 
 distclean:
