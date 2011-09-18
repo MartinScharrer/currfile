@@ -62,6 +62,7 @@
 % \begin{macro}{\currfile@set}
 % Sets the file information which are parsed by \LaTeX's \Macro\filename@parse.
 % \changes{2011/09/18}{v0.5}{Now supports path elements from \cs{input@path}.}
+% \changes{2011/09/18}{v0.5}{Now supports multiple dots in the file name.}
 %    \begin{macrocode}
 \def\currfile@set#1{%
   \begingroup
@@ -72,10 +73,12 @@
     \fi
     \closein\@inputcheck
     \@onelevel@sanitize\@filef@und
+    \let\filename@simple\currfile@parseext
+    \let\filename@base\@gobble
     \expandafter\filename@parse\expandafter{\@filef@und}%
     \global\let\currfiledir\filename@area
     \global\let\currfilebase\filename@base
-    \xdef\currfileext{\ifx\filename@ext\relax tex\else\filename@ext\fi}%
+    \global\let\currfileext\filename@ext
     \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
     \xdef\currfilepath{\currfiledir\currfilename}%
   \endgroup
@@ -109,6 +112,40 @@
 %    \end{macrocode}
 % \end{macro}
 %
+%
+% \begin{macro}{\currfile@parseext}
+% Replacement for \Macro\filename@simple to allow multiple dots in a filename.
+% This needs |\let\filename@base\@gobble| before it is called.
+% \changes{2011/09/18}{v0.5}{New macro as part of the multi-dot support.}
+%    \begin{macrocode}
+\begingroup
+\@makeother{.}
+\gdef\currfile@parseext#1.#2\\{%
+    \ifx\\#2\\%
+        \ifx\filename@base\@gobble
+            \def\filename@base{#1}%
+            \let\filename@ext\currfile@defaultext%
+        \else
+            \def\filename@ext{#1}%
+        \fi
+    \else
+        \edef\filename@base{\filename@base.#1}%
+        \def\@tempa{\currfile@parseext#2\\}%
+        \expandafter\@tempa
+    \fi
+}
+\endgroup
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@defaultext}
+% Holds the default extension `|tex|' with catcode \emph{other} like \Macro\jobname.
+% \changes{2011/09/18}{v0.5}{New macro as part of the multi-dot support.}
+%    \begin{macrocode}
+\def\currfile@defaultext{tex}
+\@onelevel@sanitize\currfile@defaultext
+%    \end{macrocode}
+% \end{macro}
 %
 % \subsection{File Stack}
 % The file information are pushed and popped on a stack to save and restore them when
