@@ -61,12 +61,18 @@
 %
 % \begin{macro}{\currfile@set}
 % Sets the file information which are parsed by \LaTeX's \Macro\filename@parse.
+% \changes{2011/09/18}{v0.5}{Now supports path elements from \cs{input@path}.}
 %    \begin{macrocode}
 \def\currfile@set#1{%
   \begingroup
-    \edef\@tempa{#1}%
-    \@onelevel@sanitize\@tempa
-    \expandafter\filename@parse\expandafter{\@tempa}%
+    \edef\@filef@und{#1}%
+    \openin\@inputcheck\@filef@und\relax
+    \ifeof\@inputcheck
+        \currfile@checkpath
+    \fi
+    \closein\@inputcheck
+    \@onelevel@sanitize\@filef@und
+    \expandafter\filename@parse\expandafter{\@filef@und}%
     \global\let\currfiledir\filename@area
     \global\let\currfilebase\filename@base
     \xdef\currfileext{\ifx\filename@ext\relax tex\else\filename@ext\fi}%
@@ -75,6 +81,30 @@
   \endgroup
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
 %<debug> \message{^^JDEBUG: \dindent\empty Entering file '\currfilename' ^^J }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\currfile@checkpath}
+% This loop is placed in an own macro for efficiency reasons.
+% In the majority of cases it should not be needed and having it as
+% a macro avoids the need to skip over this code as part of a conditional clause
+% for every read file.
+% \changes{2011/09/18}{v0.5}{New macro as part of the \cs{input@path} support.}
+%    \begin{macrocode}
+\def\currfile@checkpath{%
+    \ifx\input@path\@undefined\else
+        \expandafter\@tfor
+        \expandafter\@tempb
+        \expandafter:\expandafter=\input@path\do{%
+            \openin\@inputcheck\@tempb\@filef@und\relax
+            \ifeof\@inputcheck\else
+                \edef\@filef@und{\@tempb\@filef@und}%
+                \@break@tfor
+            \fi
+        }%
+    \fi
 }
 %    \end{macrocode}
 % \end{macro}
