@@ -24,9 +24,9 @@
 %
 % \iffalse
 %<*driver>
-\ProvidesFile{currfile.dtx}
+\ProvidesFile{currfile.dtx}[2011/09/18 v0.5 DTX file for currfile package]
 \documentclass{ydoc}[2011/03/19]
-\usepackage{currfile}[2011/01/09]
+\usepackage{currfile}[2011/09/18]
 \usepackage{ifpdf}
 \usepackage{booktabs}
 \usepackage{hyperref}
@@ -66,8 +66,9 @@
 % }
 % \changes{v0.3}{2011/01/03}{Update to use new version of filehook.}
 % \changes{v0.4}{2011/01/09}{Added if-macros and sanitized currfile macros.}
+% \changes{v0.5}{2011/09/18}{Added support for \cs{input@path} and files with multiple dots.}
 %
-% \GetFileInfo{currfile.sty}
+% \GetFileInfo{currfile.dtx}
 %
 % \DoNotIndex{\newcommand,\newenvironment,\fi,\relax,\def,\gdef,\xdef}
 % \DoNotIndex{\RequirePackage,\space,\PackageError,\PackageWarning,\let}
@@ -82,6 +83,7 @@
 %
 % \begin{abstract}
 % This small package provides the file name and path information of the current input file as \LaTeX{} macros.
+% It properly supports file name with multiple dots and the \cs{input@path} feature used by some packages like \pkg{import}.
 % \end{abstract}
 %
 % \section{Usage}
