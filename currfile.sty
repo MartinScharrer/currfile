@@ -67,11 +67,9 @@
 \def\currfile@set#1{%
   \begingroup
     \edef\@filef@und{#1}%
-    \openin\@inputcheck\@filef@und\relax
-    \ifeof\@inputcheck
+    \ifx\input@path\@undefined\else
         \currfile@checkpath
     \fi
-    \closein\@inputcheck
     \@onelevel@sanitize\@filef@und
     \let\filename@simple\currfile@parseext
     \let\filename@base\@gobble
@@ -79,7 +77,7 @@
     \global\let\currfiledir\filename@area
     \global\let\currfilebase\filename@base
     \global\let\currfileext\filename@ext
-    \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
+    \xdef\currfilename{\currfilebase\ifx\currfileext\@empty\else.\currfileext\fi}%
     \xdef\currfilepath{\currfiledir\currfilename}%
   \endgroup
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
@@ -97,7 +95,8 @@
 % \changes{2011/09/18}{v0.5}{New macro as part of the \cs{input@path} support.}
 %    \begin{macrocode}
 \def\currfile@checkpath{%
-    \ifx\input@path\@undefined\else
+    \openin\@inputcheck\@filef@und\relax
+    \ifeof\@inputcheck
         \expandafter\@tfor
         \expandafter\@tempb
         \expandafter:\expandafter=\input@path\do{%
@@ -108,6 +107,7 @@
             \fi
         }%
     \fi
+    \closein\@inputcheck
 }
 %    \end{macrocode}
 % \end{macro}
