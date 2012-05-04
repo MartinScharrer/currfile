@@ -98,6 +98,11 @@
 %
 %
 % \subsection{Absolute Path}
+%
+% \begin{macro}{\getabspath}
+% Opens the |\jobname.fls| file and checks for the first `|INPUT|' line
+% which lists the given filename.
+%    \begin{macrocode}
 \newcommand\getabspath[1]{%
     \begingroup
     \edef\filename{#1}%
@@ -128,9 +133,9 @@
     \endgroup
     \@tempa
 }
+%    \end{macrocode}
+% \end{macro}
 %
-
-
 %
 % \begin{macro}{\getmainfile}
 % Opens the |\jobname.fls| file and checks for the first `|INPUT|' line
