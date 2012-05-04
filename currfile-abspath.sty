@@ -1,59 +1,58 @@
-
-% Declare macros
+% \subsection{Package header}
+%
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{currfile-abspath}[%
+%<!DATE>
+%<!VERSION>
+%<*DRIVER>
+    2099/01/01 develop
+%</DRIVER>
+    Provides absolute file paths, the parent working directory and the main file name]
+%    \end{macrocode}
+%
+%
+% \subsection{Preliminary Code}
+%
+% Declare and init macros
+%    \begin{macrocode}
 \newcommand\thepwd{}
 \newcommand\theabspath{}
 \newcommand\themainfile{}
+%    \end{macrocode}
+%
+% Ensure that the main file extension is defined and not empty.
+%    \begin{macrocode}
 \providecommand\currfile@mainext{tex}
-
 \ifx\currfile@mainext\@empty
     \PackageError{currfile-abspath}
         {Empty main file extension is not supported}{}%
 \fi
+%    \end{macrocode}
+%
+% \iffalse
 %\edef\themainfile{\jobname.\currfile@mainext}
-\@onelevel@sanitize\themainfile
-
+%\@onelevel@sanitize\themainfile
+% \fi
+%
+%
+% \begin{macro}{\currfile@abspath@noflswarning}
+%
+%    \begin{macrocode}
 \def\currfile@abspath@noflswarning{%
     \PackageWarning{currfile-abspath}
         {The required recorder file (.fls) was not found.\MessageBreak
             Please compile with the '-recorder' option.\MessageBreak
             Occurred}%
 }%
-
-\newcommand\getabspath{%
-    \begingroup
-    \edef\filename{\jobname.tex}%
-    \@onelevel@sanitize\filename%
-    \let\thepwd\thepwd@default
-    \let\theabspath\@empty
-    \IfFileExists{\jobname.fls}{%
-        \openin\@inputcheck=\jobname.fls\relax
-        \endlinechar\m@ne
-        \readline\@inputcheck to \line
-        \expandafter\getabspath@extr\line\relax\relax\relax\relax\relax
-        \expandafter\getabspath@defs\expandafter{\filename}%
-        \loop
-            \readline\@inputcheck to \line
-            \@onelevel@sanitize\line
-            \expandafter\getabspath@path\expandafter{\line}%
-            \ifeof\@inputcheck
-                \let\iterate\relax
-            \fi
-            \ifx\theabspath\@empty
-        \repeat
-        \closein\@inputcheck
-    }
-    \currfile@abspath@noflswarning
-    \ifx\theabspath\@empty
-        \let\theabspath\thepwd
-    \fi
-    \edef\@tempa{%
-        \def\noexpand\thepwd{\thepwd}%
-        \def\noexpand\theabspath{\theabspath}%
-    }%
-    \expandafter
-    \endgroup
-    \@tempa
-}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{Parent Working Directory (PWD)}
+% Opens the |\jobname.fls| file and checks for the `|PWD|' line (should be the very first one).
+% \begin{macro}{\getpwd}
+%    \begin{macrocode}
 \newcommand\getpwd{%
     \begingroup
     \let\thepwd\@empty
@@ -77,7 +76,15 @@
     \endgroup
     \@tempa
 }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\currfile@checkpwd}
+% Checks if the read line starts with `|PWD|' and stores the rest 
+% of the line in \Macro\thepwd. The space after `|PWD|' is skipped by 
+% \TeX\ when looking for |#4|.
+%    \begin{macrocode}
 \def\currfile@checkpwd#1#2#3#4#5\relax{%
     \edef\@tempa{#1#2#3}%
     \@onelevel@sanitize\@tempa
@@ -87,38 +94,54 @@
         \let\iterate\relax
     \fi
 }
-
-\begingroup
-\catcode`I=12
-\catcode`N=12
-\catcode`P=12
-\catcode`U=12
-\catcode`T=12
-\gdef\getabspath@defs#1{%
-    \def\getabspath@@path ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
-        \ifx\@empty##4\@empty\else
-            \def\theabspath{##2}%
-        \fi
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{Absolute Path}
+\newcommand\getabspath{%
+    \begingroup
+    \edef\filename{\jobname.tex}%
+    \@onelevel@sanitize\filename%
+    \let\thepwd\thepwd@default
+    \let\theabspath\@empty
+    \IfFileExists{\jobname.fls}{%
+        \openin\@inputcheck=\jobname.fls\relax
+        \endlinechar\m@ne
+        \readline\@inputcheck to \line
+        \expandafter\getabspath@extr\line\relax\relax\relax\relax\relax
+        \expandafter\currfile@abspath@defs\expandafter{\filename}%
+        \loop
+            \readline\@inputcheck to \line
+            \@onelevel@sanitize\line
+            \expandafter\getabspath@path\expandafter{\line}%
+            \ifeof\@inputcheck
+                \let\iterate\relax
+            \fi
+            \ifx\theabspath\@empty
+        \repeat
+        \closein\@inputcheck
+    }
+    \currfile@abspath@noflswarning
+    \ifx\theabspath\@empty
+        \let\theabspath\thepwd
+    \fi
+    \edef\@tempa{%
+        \def\noexpand\thepwd{\thepwd}%
+        \def\noexpand\theabspath{\theabspath}%
     }%
-    \def\getabspath@path##1{%
-        \getabspath@@path##1\relax INPUT \@empty#1\relax{}\relax\@nnil
-    }%
+    \expandafter
+    \endgroup
+    \@tempa
 }
-\def\@tempa#1{%
-    \gdef\currfile@abspath@checkmainfile ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
-        \ifx\@empty##4\@empty\else
-            \def\themainfile{##2#1}%
-        \fi
-    }%
-    \gdef\currfile@abspath@getmainfile##1{%
-        \currfile@abspath@checkmainfile##1\relax INPUT \@empty#1\relax{}\relax\@nnil
-    }%
-}
-\edef\@tempb{.\currfile@mainext}
-\@onelevel@sanitize\@tempb
-\expandafter\@tempa\expandafter{\@tempb}
-\endgroup
+%
 
+
+%
+% \begin{macro}{\getmainfile}
+% Opens the |\jobname.fls| file and checks for the first `|INPUT|' line
+% which lists a file with the main file extension (usually `|.tex|').
+%    \begin{macrocode}
 \newcommand\getmainfile{%
     \let\themainfile\@empty
     \IfFileExists{\jobname.fls}{%
@@ -137,5 +160,69 @@
     }%
     \currfile@abspath@noflswarning
 }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{Line scanning macros for abspath and mainfile}
+%
+% Change catcodes for `|INPUT|' to 12 (\emph{other}), because we need
+% them this way in the parameter lists of the following macros.
+%    \begin{macrocode}
+\begingroup
+\catcode`I=12
+\catcode`N=12
+\catcode`P=12
+\catcode`U=12
+\catcode`T=12
+%    \end{macrocode}
+%
+% \begin{macro}{\currfile@abspath@defs}
+% Dynamically defines the macros needed to find the line with the requested file name.
+%    \begin{macrocode}
+\gdef\currfile@abspath@defs#1{%
+    \def\getabspath@@path ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
+        \ifx\@empty##4\@empty\else
+            \def\theabspath{##2}%
+        \fi
+    }%
+    \def\getabspath@path##1{%
+        \getabspath@@path##1\relax INPUT \@empty#1\relax{}\relax\@nnil
+    }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\currfile@abspath@checkmainfile}
+% \begin{macro}{\currfile@abspath@getmainfile}
+% These two macros are defined with the main file extension given by
+% \Macro\currfile@mainext in their parameter texts. To insert the extension
+% with the correct catcode 12 two temporary auxiliary macros are utilized.
+% The |get| macro places the line content before the |check| macro with a suitable
+% fallback code so that the search text is always found and no \TeX\ error is raised.
+% The |check| macro tests if the fallback has occurred and stores the read path
+% if this was not the case.
+%    \begin{macrocode}
+\def\@tempa#1{%
+    \gdef\currfile@abspath@checkmainfile ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
+        \ifx\@empty##4\@empty\else
+            \def\themainfile{##2#1}%
+        \fi
+    }%
+    \gdef\currfile@abspath@getmainfile##1{%
+        \currfile@abspath@checkmainfile##1\relax INPUT \@empty#1\relax{}\relax\@nnil
+    }%
+}
+\edef\@tempb{.\currfile@mainext}
+\@onelevel@sanitize\@tempb
+\expandafter\@tempa\expandafter{\@tempb}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% Ends catcode changes:
+%    \begin{macrocode}
+\endgroup
+%    \end{macrocode}
+%
