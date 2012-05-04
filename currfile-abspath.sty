@@ -59,10 +59,9 @@
     \IfFileExists{\jobname.fls}{%
         \openin\@inputcheck=\jobname.fls\relax
         \endlinechar\m@ne
-        \edef\@tempb{PWD}%
-        \@onelevel@sanitize\@tempb
         \loop
             \readline\@inputcheck to \line
+            \@onelevel@sanitize\line
             \expandafter\currfile@checkpwd\line\relax\relax\relax\relax\relax
             \ifeof\@inputcheck\else
         \repeat
@@ -87,11 +86,11 @@
 %    \begin{macrocode}
 \def\currfile@checkpwd#1#2#3#4#5\relax{%
     \edef\@tempa{#1#2#3}%
-    \@onelevel@sanitize\@tempa
+    \edef\@tempb{PWD}%
+    \@onelevel@sanitize\@tempb
     \ifx\@tempa\@tempb
        \edef\thepwd{#4#5/}%
-       \@onelevel@sanitize\thepwd
-        \let\iterate\relax
+       \let\iterate\relax
     \fi
 }
 %    \end{macrocode}
@@ -99,35 +98,29 @@
 %
 %
 % \subsection{Absolute Path}
-\newcommand\getabspath{%
+\newcommand\getabspath[1]{%
     \begingroup
-    \edef\filename{\jobname.tex}%
+    \edef\filename{#1}%
     \@onelevel@sanitize\filename%
-    \let\thepwd\thepwd@default
     \let\theabspath\@empty
+    \IfFileExists{\filename}{%
     \IfFileExists{\jobname.fls}{%
         \openin\@inputcheck=\jobname.fls\relax
         \endlinechar\m@ne
-        \readline\@inputcheck to \line
-        \expandafter\getabspath@extr\line\relax\relax\relax\relax\relax
         \expandafter\currfile@abspath@defs\expandafter{\filename}%
+        \readline\@inputcheck to \line
+        \@onelevel@sanitize\line
+        \expandafter\currfile@checkpwd\line\relax\relax\relax\relax\relax
         \loop
             \readline\@inputcheck to \line
             \@onelevel@sanitize\line
-            \expandafter\getabspath@path\expandafter{\line}%
-            \ifeof\@inputcheck
-                \let\iterate\relax
-            \fi
-            \ifx\theabspath\@empty
+            \expandafter\currfile@abspath@getabspath\expandafter{\line}%
+            \ifeof\@inputcheck\else
         \repeat
         \closein\@inputcheck
-    }
-    \currfile@abspath@noflswarning
-    \ifx\theabspath\@empty
-        \let\theabspath\thepwd
-    \fi
+    }\currfile@abspath@noflswarning
+    }{}%
     \edef\@tempa{%
-        \def\noexpand\thepwd{\thepwd}%
         \def\noexpand\theabspath{\theabspath}%
     }%
     \expandafter
@@ -151,10 +144,7 @@
             \readline\@inputcheck to \line
             \@onelevel@sanitize\line
             \expandafter\currfile@abspath@getmainfile\expandafter{\line}%
-            \ifeof\@inputcheck
-                \let\iterate\relax
-            \fi
-            \ifx\themainfile\@empty
+            \ifeof\@inputcheck\else
         \repeat
         \closein\@inputcheck
     }%
@@ -181,13 +171,17 @@
 % Dynamically defines the macros needed to find the line with the requested file name.
 %    \begin{macrocode}
 \gdef\currfile@abspath@defs#1{%
-    \def\getabspath@@path ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
+    \def\currfile@abspath@checkabspath ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
         \ifx\@empty##4\@empty\else
             \def\theabspath{##2}%
+            \ifx\theabspath\@empty
+                \let\theabspath\thepwd
+            \fi
+            \let\iterate\relax
         \fi
     }%
-    \def\getabspath@path##1{%
-        \getabspath@@path##1\relax INPUT \@empty#1\relax{}\relax\@nnil
+    \def\currfile@abspath@getabspath##1{%
+        \currfile@abspath@checkabspath##1\relax INPUT \@empty#1\relax{}\relax\@nnil
     }%
 }
 %    \end{macrocode}
@@ -208,6 +202,7 @@
     \gdef\currfile@abspath@checkmainfile ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
         \ifx\@empty##4\@empty\else
             \def\themainfile{##2#1}%
+            \let\iterate\relax
         \fi
     }%
     \gdef\currfile@abspath@getmainfile##1{%
