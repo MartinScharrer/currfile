@@ -16,9 +16,9 @@
 %
 % Declare and init macros
 %    \begin{macrocode}
-\newcommand\thepwd{}
-\newcommand\theabspath{}
-\newcommand\themainfile{}
+\newcommand*\thepwd{}
+\newcommand*\theabspath{}
+\newcommand*\themainfile{}
 %    \end{macrocode}
 %
 % Ensure that the main file extension is defined and not empty.
@@ -122,6 +122,7 @@
     }{}%
     \edef\@tempa{%
         \def\noexpand\theabspath{\theabspath}%
+        \def\noexpand\thepwd{\thepwd}%
     }%
     \expandafter
     \endgroup
@@ -136,10 +137,14 @@
 % which lists a file with the main file extension (usually `|.tex|').
 %    \begin{macrocode}
 \newcommand\getmainfile{%
+    \begingroup
     \let\themainfile\@empty
     \IfFileExists{\jobname.fls}{%
         \openin\@inputcheck=\jobname.fls\relax
         \endlinechar\m@ne
+        \readline\@inputcheck to \line
+        \@onelevel@sanitize\line
+        \expandafter\currfile@checkpwd\line\relax\relax\relax\relax\relax
         \loop
             \readline\@inputcheck to \line
             \@onelevel@sanitize\line
@@ -149,6 +154,13 @@
         \closein\@inputcheck
     }%
     \currfile@abspath@noflswarning
+    \edef\@tempa{%
+        \def\noexpand\themainfile{\themainfile}%
+        \def\noexpand\thepwd{\thepwd}%
+    }%
+    \expandafter
+    \endgroup
+    \@tempa
 }
 %    \end{macrocode}
 % \end{macro}
