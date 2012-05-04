@@ -254,7 +254,12 @@
 % Place \Macro\jobname values on stack and use this as init value.
 %    \begin{macrocode}
 \def\currfile@stack{}
-\currfile@set{\currfile@maindir\jobname.\currfile@mainext}
+\ifcurrfile@abspath
+    \getmainfile
+    \currfile@set{\themainfile}
+\else
+    \currfile@set{\currfile@maindir\jobname.\currfile@mainext}
+\fi
 \currfile@push
 \let\currfile@stackinit\currfile@stack
 %    \end{macrocode}
