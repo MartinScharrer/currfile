@@ -5,9 +5,11 @@
 \newcommand\themainfile{}
 \providecommand\currfile@mainext{tex}
 
-
-
-\edef\themainfile{\jobname.tex}
+\ifx\currfile@mainext\@empty
+    \PackageError{currfile-abspath}
+        {Empty main file extension is not supported}{}%
+\fi
+%\edef\themainfile{\jobname.\currfile@mainext}
 \@onelevel@sanitize\themainfile
 
 \def\currfile@abspath@noflswarning{%
@@ -39,12 +41,8 @@
             \ifx\theabspath\@empty
         \repeat
         \closein\@inputcheck
-    }{%
-        \PackageWarning{getabspath}
-            {The required recorder file (.fls) was not found.\MessageBreak
-             Please compile with the '-recorder' option.\MessageBreak
-             Occurred}%
-    }%
+    }
+    \currfile@abspath@noflswarning
     \ifx\theabspath\@empty
         \let\theabspath\thepwd
     \fi
@@ -64,10 +62,6 @@
     \fi
 }
 
-\ifx\currfile@mainext\@empty
-    \PackageError{currfile-abspath}
-        {Empty main file extension is not supported}{}%
-\fi
 \begingroup
 \catcode`I=12
 \catcode`N=12
@@ -114,10 +108,8 @@
             \ifx\themainfile\@empty
         \repeat
         \closein\@inputcheck
-    }
+    }%
     \currfile@abspath@noflswarning
 }
 
-
-\def\getmainfile{}
 
