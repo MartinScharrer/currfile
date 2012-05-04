@@ -64,6 +64,10 @@
     \fi
 }
 
+\ifx\currfile@mainext\@empty
+    \PackageError{currfile-abspath}
+        {Empty main file extension is not supported}{}%
+\fi
 \begingroup
 \catcode`I=12
 \catcode`N=12
@@ -90,12 +94,6 @@
         \currfile@abspath@checkmainfile##1\relax INPUT \@empty#1\relax{}\relax\@nnil
     }%
 }
-\endgroup
-\begingroup
-\ifx\currfile@mainext\@empty
-    \PackageError{currfile-abspath}
-        {Empty main file extension is not supported}{}%
-\fi
 \edef\@tempb{.\currfile@mainext}
 \@onelevel@sanitize\@tempb
 \expandafter\@tempa\expandafter{\@tempb}
@@ -121,4 +119,5 @@
 }
 
 
+\def\getmainfile{}
 
