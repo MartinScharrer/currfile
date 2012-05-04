@@ -32,7 +32,7 @@
     \DeclareBoolOption[false]{fink}%
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
-\DeclareVoidOption{abspath}{\AtEndOfPackage{\RequirePackage{currfile-abspath}}}
+\DeclareBoolOption[false]{abspath}%
 \RequirePackage{filehook}[2011/01/09]
 \ProcessKeyvalOptions*\relax
 
@@ -41,9 +41,13 @@
 \xdef\currfile@maindir{\currfile@maindir}%
 \def\@tempa{./}%
 \ifx\@tempa\currfile@maindir
-    \global\let\currfile@maindir\empty
+    \global\let\currfile@maindir\@empty
 \fi
 \endgroup
+
+\ifcurrfile@abspath
+    \RequirePackage{currfile-abspath}
+\fi
 %    \end{macrocode}
 %
 %
@@ -86,6 +90,11 @@
     \global\let\currfileext\filename@ext
     \xdef\currfilename{\currfilebase\ifx\currfileext\@empty\else.\currfileext\fi}%
     \xdef\currfilepath{\currfiledir\currfilename}%
+    \ifcurrfile@abspath
+        \getabspath\currfilepath
+        \global\let\currfileabspath\theabspath
+        \xdef\currfileabsdir{\theabsdir\currfiledir}%
+    \fi
   \endgroup
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
 %<debug> \message{^^JDEBUG: \dindent\empty Entering file '\currfilename' ^^J }%
