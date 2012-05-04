@@ -54,11 +54,37 @@
     \endgroup
     \@tempa
 }
-\def\getabspath@extr#1#2#3#4#5\relax{%
-    \edef\@tempa{\detokenize{#1#2#3}}%
-    \edef\@tempb{\detokenize{PWD}}%
+\newcommand\getpwd{%
+    \begingroup
+    \let\thepwd\@empty
+    \IfFileExists{\jobname.fls}{%
+        \openin\@inputcheck=\jobname.fls\relax
+        \endlinechar\m@ne
+        \edef\@tempb{PWD}%
+        \@onelevel@sanitize\@tempb
+        \loop
+            \readline\@inputcheck to \line
+            \expandafter\currfile@checkpwd\line\relax\relax\relax\relax\relax
+            \ifeof\@inputcheck\else
+        \repeat
+        \closein\@inputcheck
+    }
+    \currfile@abspath@noflswarning
+    \edef\@tempa{%
+        \def\noexpand\thepwd{\thepwd}%
+    }%
+    \expandafter
+    \endgroup
+    \@tempa
+}
+
+\def\currfile@checkpwd#1#2#3#4#5\relax{%
+    \edef\@tempa{#1#2#3}%
+    \@onelevel@sanitize\@tempa
     \ifx\@tempa\@tempb
-       \edef\thepwd{\detokenize{#4#5/}}%
+       \edef\thepwd{#4#5/}%
+       \@onelevel@sanitize\thepwd
+        \let\iterate\relax
     \fi
 }
 
