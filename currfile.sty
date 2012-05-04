@@ -47,6 +47,8 @@
 
 \ifcurrfile@abspath
     \RequirePackage{currfile-abspath}
+    \let\currfileabspath\@empty
+    \let\currfileabsdir\@empty
 \fi
 %    \end{macrocode}
 %
@@ -93,7 +95,9 @@
     \ifcurrfile@abspath
         \getabspath\currfilepath
         \global\let\currfileabspath\theabspath
-        \xdef\currfileabsdir{\theabsdir\currfiledir}%
+        \ifx\theabsdir\@empty\else
+            \xdef\currfileabsdir{\theabsdir\currfiledir}%
+        \fi
     \fi
   \endgroup
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
