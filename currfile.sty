@@ -32,6 +32,7 @@
     \DeclareBoolOption[false]{fink}%
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
+\DeclareVoidOption{abspath}{\AtEndOfPackage{\RequirePackage{currfile-abspath}}}
 \RequirePackage{filehook}[2011/01/09]
 \ProcessKeyvalOptions*\relax
 

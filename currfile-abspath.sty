@@ -1,0 +1,124 @@
+
+% Declare macros
+\newcommand\thepwd{}
+\newcommand\theabspath{}
+\newcommand\themainfile{}
+\providecommand\currfile@mainext{tex}
+
+
+
+\edef\themainfile{\jobname.tex}
+\@onelevel@sanitize\themainfile
+
+\def\currfile@abspath@noflswarning{%
+    \PackageWarning{currfile-abspath}
+        {The required recorder file (.fls) was not found.\MessageBreak
+            Please compile with the '-recorder' option.\MessageBreak
+            Occurred}%
+}%
+
+\newcommand\getabspath{%
+    \begingroup
+    \edef\filename{\jobname.tex}%
+    \@onelevel@sanitize\filename%
+    \let\thepwd\thepwd@default
+    \let\theabspath\@empty
+    \IfFileExists{\jobname.fls}{%
+        \openin\@inputcheck=\jobname.fls\relax
+        \endlinechar\m@ne
+        \readline\@inputcheck to \line
+        \expandafter\getabspath@extr\line\relax\relax\relax\relax\relax
+        \expandafter\getabspath@defs\expandafter{\filename}%
+        \loop
+            \readline\@inputcheck to \line
+            \@onelevel@sanitize\line
+            \expandafter\getabspath@path\expandafter{\line}%
+            \ifeof\@inputcheck
+                \let\iterate\relax
+            \fi
+            \ifx\theabspath\@empty
+        \repeat
+        \closein\@inputcheck
+    }{%
+        \PackageWarning{getabspath}
+            {The required recorder file (.fls) was not found.\MessageBreak
+             Please compile with the '-recorder' option.\MessageBreak
+             Occurred}%
+    }%
+    \ifx\theabspath\@empty
+        \let\theabspath\thepwd
+    \fi
+    \edef\@tempa{%
+        \def\noexpand\thepwd{\thepwd}%
+        \def\noexpand\theabspath{\theabspath}%
+    }%
+    \expandafter
+    \endgroup
+    \@tempa
+}
+\def\getabspath@extr#1#2#3#4#5\relax{%
+    \edef\@tempa{\detokenize{#1#2#3}}%
+    \edef\@tempb{\detokenize{PWD}}%
+    \ifx\@tempa\@tempb
+       \edef\thepwd{\detokenize{#4#5/}}%
+    \fi
+}
+
+\begingroup
+\catcode`I=12
+\catcode`N=12
+\catcode`P=12
+\catcode`U=12
+\catcode`T=12
+\gdef\getabspath@defs#1{%
+    \def\getabspath@@path ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
+        \ifx\@empty##4\@empty\else
+            \def\theabspath{##2}%
+        \fi
+    }%
+    \def\getabspath@path##1{%
+        \getabspath@@path##1\relax INPUT \@empty#1\relax{}\relax\@nnil
+    }%
+}
+\def\@tempa#1{%
+    \gdef\currfile@abspath@checkmainfile ##1INPUT ##2#1\relax##3\relax##4\@nnil{%
+        \ifx\@empty##4\@empty\else
+            \def\themainfile{##2#1}%
+        \fi
+    }%
+    \gdef\currfile@abspath@getmainfile##1{%
+        \currfile@abspath@checkmainfile##1\relax INPUT \@empty#1\relax{}\relax\@nnil
+    }%
+}
+\endgroup
+\begingroup
+\ifx\currfile@mainext\@empty
+    \PackageError{currfile-abspath}
+        {Empty main file extension is not supported}{}%
+\fi
+\edef\@tempb{.\currfile@mainext}
+\@onelevel@sanitize\@tempb
+\expandafter\@tempa\expandafter{\@tempb}
+\endgroup
+
+\newcommand\getmainfile{%
+    \let\themainfile\@empty
+    \IfFileExists{\jobname.fls}{%
+        \openin\@inputcheck=\jobname.fls\relax
+        \endlinechar\m@ne
+        \loop
+            \readline\@inputcheck to \line
+            \@onelevel@sanitize\line
+            \expandafter\currfile@abspath@getmainfile\expandafter{\line}%
+            \ifeof\@inputcheck
+                \let\iterate\relax
+            \fi
+            \ifx\themainfile\@empty
+        \repeat
+        \closein\@inputcheck
+    }
+    \currfile@abspath@noflswarning
+}
+
+
+
