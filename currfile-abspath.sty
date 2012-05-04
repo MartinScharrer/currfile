@@ -44,7 +44,10 @@
     \PackageWarning{currfile-abspath}
         {The required recorder file (.fls) was not found.\MessageBreak
             Please compile with the '-recorder' option.\MessageBreak
+            Note that MikTeX requires two compiler runs.\MessageBreak
             Occurred}%
+    \global\let\currfile@abspath@noflswarning\relax
+    \csname currfile@abspathfalse\endcsname
 }%
 %    \end{macrocode}
 % \end{macro}
