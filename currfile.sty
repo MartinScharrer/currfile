@@ -32,6 +32,7 @@
     \DeclareBoolOption[false]{fink}%
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
+\DeclareBoolOption[false]{realmainfile}%
 \DeclareBoolOption[false]{abspath}%
 \RequirePackage{filehook}[2011/01/09]
 \ProcessKeyvalOptions*\relax
@@ -49,7 +50,11 @@
     \RequirePackage{currfile-abspath}
     \let\currfileabspath\@empty
     \let\currfileabsdir\@empty
-\fi
+    \currfile@realmainfiletrue
+\else
+\ifcurrfile@realmainfile
+    \RequirePackage{currfile-abspath}
+\fi\fi
 %    \end{macrocode}
 %
 %
@@ -251,10 +256,10 @@
 %
 % \begin{macro}{\currfile@stack}
 % \begin{macro}{\currfile@stackinit}
-% Place \Macro\jobname values on stack and use this as init value.
+% Place the main file values on stack and use this as init value.
 %    \begin{macrocode}
 \def\currfile@stack{}
-\ifcurrfile@abspath
+\ifcurrfile@realmainfile
     \getmainfile
     \currfile@set{\themainfile}
 \else
