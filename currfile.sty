@@ -175,6 +175,17 @@
 %
 % \begin{macro}{\currfile@push}
 %    \begin{macrocode}
+\ifcurrfile@abspath
+\def\currfile@push{%
+  \xdef\currfile@stack{%
+    {\currfiledir}%
+    {\currfilebase}%
+    {\currfileext}%
+    {\currfileabsdir}%
+    \currfile@stack
+  }%
+}
+\else
 \def\currfile@push{%
   \xdef\currfile@stack{%
     {\currfiledir}%
@@ -183,6 +194,7 @@
     \currfile@stack
   }%
 }
+\fi
 %    \end{macrocode}
 % \end{macro}
 %
@@ -203,6 +215,21 @@
 %
 % \begin{macro}{\currfile@pop@}
 %    \begin{macrocode}
+\ifcurrfile@abspath
+\def\currfile@pop@#1#2#3#4#5\relax{%
+  \gdef\currfiledir{#1}%
+  \gdef\currfilebase{#2}%
+  \gdef\currfileext{#3}%
+  \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
+  \xdef\currfilepath{\currfiledir\currfilename}%
+  \gdef\currfileabsdir{#4}%
+  \xdef\currfileabspath{\ifx\currfileabsdir\@empty\else\currfileabsdir\currfilepath\fi}%
+  \gdef\currfile@stack{#5}%
+%<debug> \expandafter\expandafter\expandafter\gdef
+%<debug> \expandafter\expandafter\expandafter\dindent
+%<debug> \expandafter\expandafter\expandafter{\expandafter\@gobble\dindent}%
+}
+\else
 \def\currfile@pop@#1#2#3#4\relax{%
   \gdef\currfiledir{#1}%
   \gdef\currfilebase{#2}%
@@ -214,6 +241,7 @@
 %<debug> \expandafter\expandafter\expandafter\dindent
 %<debug> \expandafter\expandafter\expandafter{\expandafter\@gobble\dindent}%
 }
+\fi
 %    \end{macrocode}
 % \end{macro}
 %
@@ -233,6 +261,12 @@
 % \end{macro}
 % \end{macro}
 %
+% Disable the change of the \opt{abspath} option at this point
+% in order to freeze the stack format.
+%    \begin{macrocode}
+\let\currfile@abspathfalse\relax
+\let\currfile@abspathtrue\relax
+%    \end{macrocode}
 %
 % \subsection{If Macros}
 % \begin{macro}{\ifcurrfilename}
