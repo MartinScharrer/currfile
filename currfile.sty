@@ -265,6 +265,26 @@
 %    \end{macrocode}
 % \end{macro}
 %
+%    \begin{macrocode}
+\ifcurrfile@abspath
+%    \end{macrocode}
+%
+% \begin{macro}{\ifcurrfileabspath}
+%    \begin{macrocode}
+\newcommand*\ifcurrfileabspath{\begingroup\currfile@if\currfileabspath}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ifcurrfileabsdir}
+%    \begin{macrocode}
+\newcommand*\ifcurrfileabsdir{\begingroup\currfile@if\currfileabsdir}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\fi
+%    \end{macrocode}
+%
 % \begin{macro}{\ifcurrfile}[1]{currfile macro or text}
 % Expands and sanitizes the first argument and then calls the internal if-macro
 % with the result.
