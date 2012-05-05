@@ -21,6 +21,10 @@
 \newcommand*\theabsdir{}
 \newcommand*\themainfile{}
 %    \end{macrocode}
+% Long, empty:
+%    \begin{macrocode}
+\newif\ifcurrfile@abspath@windows
+%    \end{macrocode}
 %
 % Ensure that the main file extension is defined and not empty.
 %    \begin{macrocode}
@@ -93,8 +97,15 @@
     \edef\@tempb{PWD}%
     \@onelevel@sanitize\@tempb
     \ifx\@tempa\@tempb
-       \edef\thepwd{#4#5/}%
-       \let\iterate\relax
+        \edef\thepwd{#4#5/}%
+        \def\@tempa{#4}%
+        \def\@tempb{/}%
+        \ifx\@tempa\@tempb
+            \currfile@abspath@windowsfalse
+        \else
+            \currfile@abspath@windowstrue
+        \fi
+        \let\iterate\relax
     \fi
 }
 %    \end{macrocode}
@@ -176,6 +187,20 @@
 %    \end{macrocode}
 % \end{macro}
 %
+%    \begin{macrocode}
+\def\currfile@abspath@testfname#1#2#3\relax{%
+    \def\@tempa{#1}%
+    \def\@tempb{/}%
+    \def\@tempc{#2}%
+    \def\@tempd{:}%
+    \ifcase0%
+        \ifx\@tempa\@tempb 1\else
+        \ifx\@tempc\@tempd 1\fi\fi
+    \relax
+        \let\theabsdir\thepwd
+    \fi
+}
+%    \end{macrocode}
 %
 % \subsection{Line scanning macros for abspath and mainfile}
 %
@@ -198,7 +223,13 @@
         \ifx\@empty##4\@empty\else
             \def\theabsdir{##2}%
             \ifx\theabsdir\@empty
-                \let\theabsdir\thepwd
+                \def\A{#1}\show\A
+                % test if directory is empty because the file is only listed by name, i.e. is in the PWD
+                % or because the searched path was an absolute one and no further path elements are therefore listed
+                % In the first case set \theabsdir to \thepwd, in the second case keep it empty.
+                \currfile@abspath@testfname#1\@empty\@empty\relax
+                \show\theabsdir
+              % \let\theabsdir\thepwd
             \fi
             \edef\theabspath{\theabsdir#1}%
             \let\iterate\relax

@@ -100,9 +100,7 @@
     \ifcurrfile@abspath
         \getabspath\currfilepath
         \global\let\currfileabspath\theabspath
-        \ifx\theabsdir\@empty\else
-            \xdef\currfileabsdir{\theabsdir\currfiledir}%
-        \fi
+        \global\let\currfileabsdir\theabsdir
     \fi
   \endgroup
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
