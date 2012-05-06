@@ -44,7 +44,11 @@
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
-\OnlyDescription
+\let\IncludeImplementation\relax
+%\let\IncludeImplementation\empty %^^A Enable implementation
+\ifx\IncludeImplementation\relax
+    \OnlyDescription
+\fi
 \begin{document}
   \DocInput{currfile.dtx}
   \PrintChanges
@@ -91,11 +95,13 @@
 %
 % \author{Martin Scharrer}
 % \email{martin@scharrer-online.de}
+% \repository{https://bitbucket.org/martin_scharrer/currfile/}
 % \maketitle
 %
 % \begin{abstract}
 % This small package provides the file name and path information of the current input file as \LaTeX{} macros.
-% It properly supports file name with multiple dots and the \cs{input@path} feature used by some packages like \pkg{import}.
+% It properly supports file names with multiple dots and the \cs{input@path} feature used by some packages like \pkg{import}.
+% Optionally also the absolute location of current input file can be provided if a special compiler option is enabled.
 % \end{abstract}
 %
 % \section{Usage}
@@ -110,6 +116,7 @@
 % text and not further macros. They are also ``sanitized'' to ensure that all characters, especially special ones like `|_|', are taken verbatim.
 % However this special characters might not be displayed correctly in all fonts. A good font is text-type (\Macro\ttfamily, \Macro\texttt{\ldots}),
 % but other fonts can be used using the \pkg{url} package, e.g.: |\urlstyle{rm}\expandafter\nolinkurl\expandafter{\currfilename}|.
+% Note that the directory separator is always `|/|' even under MS Windows.
 %
 % Special care is taken to keep the file information of \Macro\included files till the final \Macro\clearpage command, so that page header and footer of the last page 
 % will hold the correct data.
@@ -120,7 +127,7 @@
 %
 % This package uses the \pkg{filehook} package written by the same author. See there for possible incompatibilities with classes or other packages.
 %
-% More detailed information can be found in the implementation section \ref{sec:impl} if required.
+% If required more detailed information can be found in the implementation section \ifx\IncludeImplementation\relax(compile this manual with \Macro\AlsoImplementation)\else\ref{sec:impl}\fi.
 %
 % \DescribeMacro{\ifcurrfiledir}{<text>}{<true>}{<false>}
 % \DescribeMacro{\ifcurrfilebase}{<text>}{<true>}{<false>}
@@ -135,10 +142,102 @@
 % This general macro is a little slower then the specialised macros above but might be useful to compare different file names/paths where non of the two is the current file.
 % Note that the all comparisons are done insensitive to the catcodes of the texts, which is what users want. Different comparision macros (|\ifx|, \pkg{ifthenelse}) might not do this.
 %
-% \subsection*{Package Options}
-% The package provides two options \opt{mainext} and \opt{maindir} which can be used to provide the extension and directory of the main file.
+% \subsection{Package Options}
+% The package provides the following options:
+%
+% The string options \opt{mainext} and \opt{maindir} can be used to provide the extension (without the dot) and directory of the main file.
 % This is required if the above macros should be used for the main file itself and if this does has a file extension other than `|.tex|' (e.g.\ a |.dtx| file)
-% or is not located in the current directory. To provide support for the macros defined by the \pkg{fink} package (see section~\ref{sec:fink}) a \pkg{fink} option exists.
+% or is not located in the current directory. The \opt{mainext} is by default `|tex|' and the \opt{maindir} is the empty
+% string. See also the related \pkg{realmainfile} option.
+%
+% To provide support for the macros defined by the \pkg{fink} package (see section~\ref{sec:fink}) a boolean \opt{fink} option exists.
+% If the \pkg{fink} package is loaded before \pkg{currfile} this option is automatically enabled to provide
+% compatibility. The \opt{mainext} and \opt{maindir} options are then automatically set to the values of the identical
+% options of \pkg{fink}. Note that \pkg{fink} is now officially declared deprecated by its author in favour of
+% \pkg{currfile}.
+%
+% Using the boolean \opt{abspath} option\marginpar{\raggedright New in v0.6 from 2012/05/06}
+% the support for absolute directories and paths is enabled. This loads the
+% sub-package \pkg{currfile-abspath}. 
+% This requires the compiler option `|-recorder|' to be used.
+% See \autoref{sec:abspath} for more details.
+% This option will also enabled the related option \opt{realmainfile} if it isn't explicitly used.
+%
+% If the boolean \opt{realmainfile} option\marginpar{\raggedright New in v0.6 from 2012/05/06}
+% is enabled the real main file path is determined using the sub-package \pkg{currfile-abspath}.
+% This option is very useful if the job-name is set to something else then the main file base name, e.g.\ using the
+% `|-jobname|' compiler option. Note that this option requires the correct file extension being set using \opt{mainext}
+% (without the dot). If the main file has the default extension `|.tex|' then no extra efford is required. For `|.dtx|' files 
+% |mainext=dtx| must also be used, otherwise the correct file name can't be determined.
+% This option requires the compiler option `|-recorder|' to be used in order to work correctly.
+% See \autoref{sec:abspath} for more details.
+%
+%
+% \section{Absolute paths}\label{sec:abspath}
+% If\marginpar{\raggedright New in v0.6 from 2012/05/06}
+% required also the absolute path and directory of the current input file can be provided.
+% This feature is implemented by the sub-package \pkg{currfile-abspath} which is automatically loaded by the
+% \opt{abspath} option.
+% The absolute path information are read from the `|\jobname.fls|' file produced by the `|-recorder|' compiler option
+% (i.e.\ compile with `|pdflatex -recorder file.tex|').
+% Without this compiler option a warning is produced and the related macros stay empty.
+% Note that TeX Live under Linux and Windows is able to read the currently produced `|.fls|' file while with MiKTeX
+% the file of the last run is still active. The means that the information is not available with MiKTeX in the very
+% first compiler run and every time the `|.fls|' file is deleted. Also, changes in the file structure are taking 
+% two compiler runs in order to be noticed. With TeX Live the `|.fls|' file and its information is always current.
+%
+%
+% \subsection{Additional \pkg{currfile} macros for absolute dir and path}
+% Using the \opt{abspath} package option of \pkg{currfile} the following macros with absolute directories and paths are enabled.
+%
+% \DescribeMacro{\currfileabsdir}
+% \DescribeMacro{\currfileabspath}
+% Hold the absolute directory and path (directory plus filename) of the current input file, respectively.
+% Both macros will always be empty if the `|.fls|' file is not available.
+%
+% \DescribeMacro{\ifcurrfileabsdir}{<text>}{<true>}{<false>}
+% \DescribeMacro{\ifcurrfileabspath}{<text>}{<true>}{<false>}
+% These if-macros allow the comparison of \meta{text} with the current absolute file directory and path, respectively.
+% The \meta{text} is fully expanded and sanitized for the comparison.
+%
+% \subsection{Stand-alone usage of \pkg{currfile-abspath}}
+% The sub-package \pkg{currfile-abspath} can also be used on its own and provides the following lower-level macros:
+%
+% \DescribeMacro\getpwd
+% \DescribeMacro\thepwd
+% The parent working directory (PWD) is read by \Macro\getpwd from the `|.fls|' file and stored in \Macro\thepwd.
+% All characters of the directory will have catcode 12 (other) except spaces which still have catcode 10 (space).
+% If the PWD could not be determined, because there was not `|.fls|' file, then `\Macro\thepwd` will be empty.
+% Note that \Macro\getmainfile and \Macro\getabspath both also set \Macro\thepwd while reading the `|.fls|' file.
+%
+% \DescribeMacro\getmainfile
+% \DescribeMacro\themainfile
+% With \Macro\getmainfile the name of the main file is read from the `|.fls|' file and stored in \Macro\themainfile.
+% All characters of the file name will have catcode 12 (other) except spaces which still have catcode 10 (space).
+% If the main file name could not be determined, because there was not `|.fls|' file, then `\Macro\themainfile` will be empty.
+%
+% Here it is assumed that the first read file with the `|.tex|' extension is the main file. There is currently no user interface for this
+% sub-package to change this extension (to e.g.\ `|.dtx|'). However, this can be done using the \opt{mainext} option
+% of the main package \pkg{currfile}.
+%
+% \DescribeMacro\getabspath{<file name>}
+% \DescribeMacro\getabspath{<dir/file name>}
+% \DescribeMacro\theabspath
+% \DescribeMacro\theabsdir
+% With \Macro\getabspath{<file name>} the absolute path of the given file is read from the `|.fls|' file and stored in \Macro\theabspath.
+% The directory component (path without file name) is stored in \Macro\theabsdir.
+% The directory always ends in a `|/|' (even under MS Windows), so that a file name can be appended directly.
+% All characters of both macros will have catcode 12 (other) except spaces which still have catcode 10 (space).
+% Note that \meta{file name} must include the full extension but can include a directory component (e.g.\ `|subdir/file.tex|').
+% If a directory component is given it will not be part of \Macro\theabsdir.
+% For example \Macro\getabspath{'subdir/file.tex'} will return \Macro\theabspath as `|/absolute/path/subdir/file.tex|'
+% and \Macro\theabsdir as `|/absolute/path/|'. This differs from \Macro\currfileabsdir which will always includes all directory
+% elements, which is done by appending \Macro\currfiledir after \Macro\theabsdir.
+%
+% The given file must be directly accessible by \TeX, i.e.\ from the current directory or using the |TEXMF| tree,
+% otherwise it the absolute location can not be determined. If the file can't be found in the `|.fls|' file the macros
+% \Macro\theabspath and \Macro\theabsdir are empty.
+%
 %
 % \section{Usage inside file hooks}
 % This package uses the `EveryFile' hooks of the \pkg{filehook} package to update its macros.

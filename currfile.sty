@@ -33,6 +33,7 @@
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
 \DeclareBoolOption[false]{realmainfile}%
+\let\ifcurrfile@realmainfile\relax
 \DeclareBoolOption[false]{abspath}%
 \RequirePackage{filehook}[2011/01/09]
 \ProcessKeyvalOptions*\relax
@@ -46,11 +47,22 @@
 \fi
 \endgroup
 
+%    \begin{macrocode}
+% Check if \opt{realmainfile} option was used. If not it is determined
+% by the \opt{abspath} option.
+%    \end{macrocode}
+\expandafter\ifx\csname ifcurrfile@realmainfile\endcsname\relax
+    \ifcurrfile@abspath
+        \currfile@realmainfiletrue
+    \else
+        \currfile@realmainfilefalse
+    \fi
+\fi
+
 \let\currfileabspath\@empty
 \let\currfileabsdir\@empty
 \ifcurrfile@abspath
     \RequirePackage{currfile-abspath}
-    \currfile@realmainfiletrue
 \else
 \ifcurrfile@realmainfile
     \RequirePackage{currfile-abspath}
