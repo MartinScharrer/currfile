@@ -46,10 +46,10 @@
 \fi
 \endgroup
 
+\let\currfileabspath\@empty
+\let\currfileabsdir\@empty
 \ifcurrfile@abspath
     \RequirePackage{currfile-abspath}
-    \let\currfileabspath\@empty
-    \let\currfileabsdir\@empty
     \currfile@realmainfiletrue
 \else
 \ifcurrfile@realmainfile
@@ -100,7 +100,7 @@
     \ifcurrfile@abspath
         \getabspath\currfilepath
         \global\let\currfileabspath\theabspath
-        \global\let\currfileabsdir\theabsdir
+        \xdef\currfileabsdir{\theabsdir\currfiledir}%
     \fi
   \endgroup
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
@@ -226,7 +226,7 @@
   \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
   \xdef\currfilepath{\currfiledir\currfilename}%
   \gdef\currfileabsdir{#4}%
-  \xdef\currfileabspath{\ifx\currfileabsdir\@empty\else\currfileabsdir\currfilepath\fi}%
+  \xdef\currfileabspath{\ifx\currfileabsdir\@empty\else\currfileabsdir\currfilename\fi}%
   \gdef\currfile@stack{#5}%
 %<debug> \expandafter\expandafter\expandafter\gdef
 %<debug> \expandafter\expandafter\expandafter\dindent
