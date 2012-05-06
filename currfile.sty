@@ -259,7 +259,11 @@
 \def\currfile@stack{}
 \ifcurrfile@realmainfile
     \getmainfile
-    \currfile@set{\themainfile}
+    \ifx\themainfile\@empty
+        \currfile@set{\currfile@maindir\jobname.\currfile@mainext}
+    \else
+        \currfile@set{\themainfile}
+    \fi
 \else
     \currfile@set{\currfile@maindir\jobname.\currfile@mainext}
 \fi
