@@ -1,4 +1,6 @@
-% \subsection{Package header}
+% \subsection{Sub-package \pkg{currfile-abspath}}
+%
+% \subsubsection{Package header}
 %
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
@@ -12,7 +14,7 @@
 %    \end{macrocode}
 %
 %
-% \subsection{Preliminary Code}
+% \subsubsection{Preliminary Code}
 %
 % Declare and init macros
 %    \begin{macrocode}
@@ -57,7 +59,7 @@
 % \end{macro}
 %
 %
-% \subsection{Parent Working Directory (PWD)}
+% \subsubsection{Parent Working Directory (PWD)}
 % Opens the |\jobname.fls| file and checks for the `|PWD|' line (should be the very first one).
 % \begin{macro}{\getpwd}
 %    \begin{macrocode}
@@ -112,7 +114,7 @@
 % \end{macro}
 %
 %
-% \subsection{Absolute Path}
+% \subsubsection{Absolute Path}
 %
 % \begin{macro}{\getabspath}
 % Opens the |\jobname.fls| file and checks for the first `|INPUT|' line
@@ -188,11 +190,13 @@
 % \end{macro}
 %
 %
-% \subsection{Line scanning macros for abspath and mainfile}
+% \subsubsection{Line scanning macros for abspath and mainfile}
 %
+%
+% \begin{macro}{\currfile@abspath@testfname}
 % Test if directory is empty because the file is only listed by name, i.e. is in the PWD
 % or because the searched path was an absolute one and no further path elements are therefore listed
-% In the first case set \theabsdir to \thepwd, in the second case keep it empty.
+% In the first case set \Macro\theabsdir to \Macro\thepwd, in the second case keep it empty.
 %    \begin{macrocode}
 \def\currfile@abspath@testfname#1#2#3\relax{%
     \ifcurrfile@abspath@windows
@@ -207,6 +211,7 @@
     \fi
 }
 %    \end{macrocode}
+% \end{macro}
 %
 % Change catcodes for `|INPUT|' to 12 (\emph{other}), because we need
 % them this way in the parameter lists of the following macros.

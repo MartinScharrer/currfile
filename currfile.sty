@@ -1,5 +1,7 @@
 %
-% \subsection{Package header}
+% \subsection{Package \pkg{currfile}}
+%
+% \subsubsection{Package header}
 %
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
@@ -12,7 +14,7 @@
     ydoc package to describe macros, environments, options etc.]
 %    \end{macrocode}
 %
-% \subsection{Options}
+% \subsubsection{Options}
 %
 %    \begin{macrocode}
 \RequirePackage{kvoptions}
@@ -47,10 +49,10 @@
 \fi
 \endgroup
 
-%    \begin{macrocode}
+%    \end{macrocode}
 % Check if \opt{realmainfile} option was used. If not it is determined
 % by the \opt{abspath} option.
-%    \end{macrocode}
+%    \begin{macrocode}
 \expandafter\ifx\csname ifcurrfile@realmainfile\endcsname\relax
     \ifcurrfile@abspath
         \currfile@realmainfiletrue
@@ -70,7 +72,7 @@
 %    \end{macrocode}
 %
 %
-% \subsection{File Hooks}
+% \subsubsection{File Hooks}
 % The \pkg{filehook} package is used to execute the macros at the correct places.
 % However it must be loaded before the option processed because the |fink| compatibility
 % code in |filehook-fink| will modify the option list.
@@ -87,7 +89,7 @@
 %    \end{macrocode}
 %
 %
-% \subsection{Set Current Values}
+% \subsubsection{Set Current Values}
 %
 % \begin{macro}{\currfile@set}
 % Sets the file information which are parsed by \LaTeX's \Macro\filename@parse.
@@ -182,7 +184,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{File Stack}
+% \subsubsection{File Stack}
 % The file information are pushed and popped on a stack to save and restore them when
 % entering and leaving a sub-file, respectively. This is quite similar to the way 
 % \LaTeX\ saves file base names and extension as well as the `@' status (letter or other) for
@@ -292,7 +294,7 @@
 \let\currfile@abspathtrue\relax
 %    \end{macrocode}
 %
-% \subsection{If Macros}
+% \subsubsection{If Macros}
 % \begin{macro}{\ifcurrfilename}
 %    \begin{macrocode}
 \newcommand*\ifcurrfilename{\begingroup\currfile@if\currfilename}
@@ -375,7 +377,7 @@
 % \end{macro}
 %
 %
-% \subsection{Fink Macros}
+% \subsubsection{Fink Macros}
 %
 % The \pkg{fink} option defines all \pkg{fink} package macros to use the ones provided
 % by this package. If the \pkg{fink} package was loaded beforehand the restoration
