@@ -187,16 +187,19 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% test if directory is empty because the file is only listed by name, i.e. is in the PWD
+% or because the searched path was an absolute one and no further path elements are therefore listed
+% In the first case set \theabsdir to \thepwd, in the second case keep it empty.
 %    \begin{macrocode}
 \def\currfile@abspath@testfname#1#2#3\relax{%
-    \def\@tempa{#1}%
-    \def\@tempb{/}%
-    \def\@tempc{#2}%
-    \def\@tempd{:}%
-    \ifcase0%
-        \ifx\@tempa\@tempb 1\else
-        \ifx\@tempc\@tempd 1\fi\fi
-    \relax
+    \ifcurrfile@abspath@windows
+        \def\@tempa{#2}%
+        \def\@tempb{:}%
+    \else
+        \def\@tempa{#1}%
+        \def\@tempb{/}%
+    \fi
+    \ifx\@tempa\@tempb\else
         \let\theabsdir\thepwd
     \fi
 }
@@ -223,13 +226,7 @@
         \ifx\@empty##4\@empty\else
             \def\theabsdir{##2}%
             \ifx\theabsdir\@empty
-                \def\A{#1}\show\A
-                % test if directory is empty because the file is only listed by name, i.e. is in the PWD
-                % or because the searched path was an absolute one and no further path elements are therefore listed
-                % In the first case set \theabsdir to \thepwd, in the second case keep it empty.
                 \currfile@abspath@testfname#1\@empty\@empty\relax
-                \show\theabsdir
-              % \let\theabsdir\thepwd
             \fi
             \edef\theabspath{\theabsdir#1}%
             \let\iterate\relax
