@@ -187,7 +187,10 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% test if directory is empty because the file is only listed by name, i.e. is in the PWD
+%
+% \subsection{Line scanning macros for abspath and mainfile}
+%
+% Test if directory is empty because the file is only listed by name, i.e. is in the PWD
 % or because the searched path was an absolute one and no further path elements are therefore listed
 % In the first case set \theabsdir to \thepwd, in the second case keep it empty.
 %    \begin{macrocode}
@@ -204,8 +207,6 @@
     \fi
 }
 %    \end{macrocode}
-%
-% \subsection{Line scanning macros for abspath and mainfile}
 %
 % Change catcodes for `|INPUT|' to 12 (\emph{other}), because we need
 % them this way in the parameter lists of the following macros.
