@@ -29,10 +29,10 @@
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesFile{currfile.dtx}[%
 %<=*DATE>
-    2012/05/06
+    2012/05/09
 %<=/DATE>
 %<=*VERSION>
-    v0.6
+    v0.7
 %<=/VERSION>
     DTX file for currfile package]
 
@@ -41,6 +41,7 @@
 \usepackage{ifpdf}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\usepackage{flafter}
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
@@ -83,6 +84,8 @@
 % \changes{v0.3}{2011/01/03}{Update to use new version of filehook.}
 % \changes{v0.4}{2011/01/09}{Added if-macros and sanitized currfile macros.}
 % \changes{v0.5}{2011/09/18}{Added support for \cs{input@path} and files with multiple dots.}
+% \changes{v0.6}{2012/05/06}{Added support for absolute file paths.}
+% \changes{v0.7}{2012/05/09}{Added support for parent file paths.}
 %
 % \GetFileInfo{currfile.dtx}
 %
@@ -173,6 +176,9 @@
 % This option requires the compiler option `|-recorder|' to be used in order to work correctly.
 % See \autoref{sec:abspath} for more details.
 %
+% Using the boolean \opt{parent} option\marginpar{\raggedright New in v0.7 from 2012/05/09}
+% additional macros are set for the parent file of the current file.
+% See \autoref{sec:parent} for more details.
 %
 % \section{Absolute paths}\label{sec:abspath}
 % If\marginpar{\raggedright New in v0.6 from 2012/05/06}
@@ -238,6 +244,24 @@
 % The given file must be directly accessible by \TeX, i.e.\ from the current directory or using the |TEXMF| tree,
 % otherwise it the absolute location can not be determined. If the file can't be found in the `|.fls|' file the macros
 % \Macro\theabspath and \Macro\theabsdir are empty.
+%
+% \section{Parent file macros}\label{sec:parent}
+% If\marginpar{\raggedright New in v0.7 from 2012/05/09}
+% the \opt{parent} package option is enabled the following macros are provided.
+% They are no direct |\if...| macros for these but the general \Macro\ifcurrfile macro can be used with them.
+%
+% \DescribeMacro{\parentfiledir}
+% \DescribeMacro{\parentfilebase}
+% \DescribeMacro{\parentfileext}
+% \DescribeMacro{\parentfilename}
+% \DescribeMacro{\parentfilepath}
+% These macros are analog to the |\curfile...| macros but for the parent file of the current file.
+% They are all empty for the main file which does not have a parent file.
+%
+% \DescribeMacro{\parentfileabsdir}
+% \DescribeMacro{\parentfileabspath}
+% These macros are provided if the \opt{abspath} option is used in addition to \opt{parent}.
+% They are also empty for the main file.
 %
 %
 % \section{Usage inside file hooks}
