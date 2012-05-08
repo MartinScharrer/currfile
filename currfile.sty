@@ -62,8 +62,6 @@
     \fi
 \fi
 
-\let\currfileabspath\@empty
-\let\currfileabsdir\@empty
 \ifcurrfile@abspath
     \RequirePackage{currfile-abspath}
 \else
@@ -130,13 +128,6 @@
 % updating the current file data.
 %    \begin{macrocode}
 \ifcurrfile@parent
-\let\currfiledir\@empty
-\let\currfilebase\@empty
-\let\currfileext\@empty
-\let\currfilename\@empty
-\let\currfilepath\@empty
-\let\currfileabspath\@empty
-\let\currfileabsdir\@empty
 \ifcurrfile@abspath
 \def\currfile@setparent{%
     \global\let\parentfiledir\currfiledir
@@ -263,7 +254,7 @@
     \global\let\currfile@stack\currfile@stackinit
   \fi
   \expandafter\currfile@pop@\currfile@stack\relax
-  \relax\relax\relax
+  \relax\relax\relax\relax\relax\relax\relax
 %<debug> \message{^^JDEBUG: \dindent\empty Restoring file '\currfilename' ^^J }%
 }
 %    \end{macrocode}
@@ -333,9 +324,17 @@
 %
 % \begin{macro}{\currfile@stack}
 % \begin{macro}{\currfile@stackinit}
-% Place the main file values on stack and use this as init value.
+% Initialise the stack with empty values and set the main file values.
 %    \begin{macrocode}
-\def\currfile@stack{}
+\let\currfile@stack\@empty
+\let\currfiledir\@empty
+\let\currfilebase\@empty
+\let\currfileext\@empty
+\let\currfilename\@empty
+\let\currfilepath\@empty
+\let\currfileabspath\@empty
+\let\currfileabsdir\@empty
+\currfile@push
 \ifcurrfile@realmainfile
     \getmainfile
     \ifx\themainfile\@empty
@@ -346,7 +345,6 @@
 \else
     \currfile@set{\currfile@maindir\jobname.\currfile@mainext}
 \fi
-\currfile@push
 \let\currfile@stackinit\currfile@stack
 %    \end{macrocode}
 % \end{macro}
