@@ -34,6 +34,7 @@
     \DeclareBoolOption[false]{fink}%
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
+\DeclareBoolOption[false]{parent}%
 \DeclareBoolOption[false]{realmainfile}%
 \let\ifcurrfile@realmainfile\relax
 \DeclareBoolOption[false]{abspath}%
@@ -98,6 +99,7 @@
 %    \begin{macrocode}
 \def\currfile@set#1{%
   \begingroup
+    \currfile@setparent
     \edef\@filef@und{#1}%
     \ifx\input@path\@undefined\else
         \currfile@checkpath
@@ -120,6 +122,43 @@
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
 %<debug> \message{^^JDEBUG: \dindent\empty Entering file '\currfilename' ^^J }%
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@parent}
+% Sets the current file data as parent file data. Must be called directly before
+% updating the current file data.
+%    \begin{macrocode}
+\ifcurrfile@parent
+\let\currfiledir\@empty
+\let\currfilebase\@empty
+\let\currfileext\@empty
+\let\currfilename\@empty
+\let\currfilepath\@empty
+\let\currfileabspath\@empty
+\let\currfileabsdir\@empty
+\ifcurrfile@abspath
+\def\currfile@setparent{%
+    \global\let\parentfiledir\currfiledir
+    \global\let\parentfilebase\currfilebase
+    \global\let\parentfileext\currfileext
+    \global\let\parentfilename\currfilename
+    \global\let\parentfilepath\currfilepath
+    \global\let\parentfileabspath\currfileabspath
+    \global\let\parentfileabsdir\currfileabsdir
+}
+\else
+\def\currfile@setparent{%
+    \global\let\parentfiledir\currfiledir
+    \global\let\parentfilebase\currfilebase
+    \global\let\parentfileext\currfileext
+    \global\let\parentfilename\currfilename
+    \global\let\parentfilepath\currfilepath
+}
+\fi
+\else
+\let\currfile@setparent\relax
+\fi
 %    \end{macrocode}
 % \end{macro}
 %
@@ -233,7 +272,7 @@
 % \begin{macro}{\currfile@pop@}
 %    \begin{macrocode}
 \ifcurrfile@abspath
-\def\currfile@pop@#1#2#3#4#5\relax{%
+\def\currfile@pop@#1#2#3#4{%
   \gdef\currfiledir{#1}%
   \gdef\currfilebase{#2}%
   \gdef\currfileext{#3}%
@@ -241,22 +280,48 @@
   \xdef\currfilepath{\currfiledir\currfilename}%
   \gdef\currfileabsdir{#4}%
   \xdef\currfileabspath{\ifx\currfileabsdir\@empty\else\currfileabsdir\currfilename\fi}%
-  \gdef\currfile@stack{#5}%
-%<debug> \expandafter\expandafter\expandafter\gdef
-%<debug> \expandafter\expandafter\expandafter\dindent
-%<debug> \expandafter\expandafter\expandafter{\expandafter\@gobble\dindent}%
+  \currfile@updatestack
 }
 \else
-\def\currfile@pop@#1#2#3#4\relax{%
+\def\currfile@pop@#1#2#3{%
   \gdef\currfiledir{#1}%
   \gdef\currfilebase{#2}%
   \gdef\currfileext{#3}%
   \xdef\currfilename{\currfilebase\ifx\currfileext\empty\else.\currfileext\fi}%
   \xdef\currfilepath{\currfiledir\currfilename}%
-  \gdef\currfile@stack{#4}%
-%<debug> \expandafter\expandafter\expandafter\gdef
-%<debug> \expandafter\expandafter\expandafter\dindent
-%<debug> \expandafter\expandafter\expandafter{\expandafter\@gobble\dindent}%
+  \currfile@updatestack
+}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@updatestack}
+%    \begin{macrocode}
+\ifcurrfile@parent
+\ifcurrfile@abspath
+\def\currfile@updatestack#1#2#3#4#5\relax{%
+  \gdef\parentfiledir{#1}%
+  \gdef\parentfilebase{#2}%
+  \gdef\parentfileext{#3}%
+  \xdef\parentfilename{\parentfilebase\ifx\parentfileext\empty\else.\parentfileext\fi}%
+  \xdef\parentfilepath{\parentfiledir\parentfilename}%
+  \gdef\parentfileabsdir{#4}%
+  \xdef\parentfileabspath{\ifx\parentfileabsdir\@empty\else\parentfileabsdir\parentfilename\fi}%
+  \gdef\currfile@stack{{#1}{#2}{#3}{#4}#5}%
+}
+\else
+\def\currfile@updatestack#1#2#3#4\relax{%
+  \gdef\parentfiledir{#1}%
+  \gdef\parentfilebase{#2}%
+  \gdef\parentfileext{#3}%
+  \xdef\parentfilename{\parentfilebase\ifx\parentfileext\empty\else.\parentfileext\fi}%
+  \xdef\parentfilepath{\parentfiledir\parentfilename}%
+  \gdef\currfile@stack{{#1}{#2}{#3}#4}%
+}
+\fi
+\else
+\def\currfile@updatestack#1\relax{%
+  \gdef\currfile@stack{#1}%
 }
 \fi
 %    \end{macrocode}
