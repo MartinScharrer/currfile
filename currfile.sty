@@ -116,6 +116,7 @@
         \global\let\currfileabspath\theabspath
         \xdef\currfileabsdir{\theabsdir\currfiledir}%
     \fi
+    \addtocounter{currfiledepth}\@ne
   \endgroup
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
 %<debug> \message{^^JDEBUG: \dindent\empty Entering file '\currfilename' ^^J }%
@@ -252,6 +253,9 @@
   \ifx\currfile@stack\empty
     \PackageWarning{currfile}{File stack underflow!}%
     \global\let\currfile@stack\currfile@stackinit
+    \setcounter{currfiledepth}\@ne
+  \else
+    \addtocounter{currfiledepth}\m@ne
   \fi
   \expandafter\currfile@pop@\currfile@stack\relax
   \relax\relax\relax\relax\relax\relax\relax
@@ -334,6 +338,7 @@
 \let\currfilepath\@empty
 \let\currfileabspath\@empty
 \let\currfileabsdir\@empty
+\newcounter{currfiledepth}
 \currfile@push
 \ifcurrfile@realmainfile
     \getmainfile

@@ -127,11 +127,21 @@
 % Since v0.2 all files are are taken into account, i.e.\ files read using \Macro\input, \Macro\include, \Macro\InputIfFileExists, \Macro\usepackage, \Macro\RequirePackage and even
 % \Macro\LoadClass and similar macros. Before v0.2 only \Macro\input or \Macro\include and the main file were taken into account.
 %
-%
 % This package uses the \pkg{filehook} package written by the same author. See there for possible incompatibilities with classes or other packages.
 %
 % If required more detailed information can be found in the implementation section \ifx\IncludeImplementation\relax(compile this manual with \Macro\AlsoImplementation)\else
 % \unskip~\ref{sec:impl}\fi.
+%
+% \begingroup
+% \let\DescribeCounter\DescribeKey
+% \let\keydescstyle\macrodescstyle
+% \DescribeCounter{currfiledepth}
+% This\marginpar{\raggedright New in v0.7 from 2012/05/09} \LaTeX\ counter provides the nesting depth of the current input file.
+% For the main file name it has a value of 1.
+% Inside a sub-file of the main file it has a value of 2, while in a sub-file to that file it has a value of 3, etc.
+% Like all \LaTeX\ counter it can be typeset using \Macro\arabic{currfiledepth} and its numeric value can be accessed
+% using \Macro\value{currfiledepth}.
+% \endgroup
 %
 % \DescribeMacro{\ifcurrfiledir}{<text>}{<true>}{<false>}
 % \DescribeMacro{\ifcurrfilebase}{<text>}{<true>}{<false>}
