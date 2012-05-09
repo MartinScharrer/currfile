@@ -334,21 +334,18 @@
   \expandafter\currfile@getparents\currfile@stack\relax
   \relax\relax\relax\relax\relax\relax\relax
 }
-\def\currfile@parentnumber{%
-    \romannumeral\@tempcnta
-}
 \ifcurrfile@abspath
 \def\currfile@getparents#1#2#3#4{%
-  \@namedef{parentfiledir\currfile@parentnumber}{#1}%
-  \@namedef{parentfilebase\currfile@parentnumber}{#2}%
-  \@namedef{parentfileext\currfile@parentnumber}{#3}%
-  \expandafter\edef\csname parentfilename\currfile@parentnumber\endcsname{#2\ifx\empty#3\empty\else.#3\fi}%
-  \expandafter\edef\csname parentfilepath\currfile@parentnumber\endcsname{#1\csname parentfilename\currfile@parentnumber\endcsname}%
-  \@namedef{parentfileabsdir\currfile@parentnumber}{#4}%
-  \expandafter\edef\csname parentfileabspath\currfile@parentnumber\endcsname{%
-    \expandafter\ifx\csname parentfileabsdir\currfile@parentnumber\endcsname\@empty\else
-      \csname parentfileabsdir\currfile@parentnumber\endcsname
-      \csname parentfilename\currfile@parentnumber\endcsname
+  \@namedef{parentfiledir\romannumeral\@tempcnta}{#1}%
+  \@namedef{parentfilebase\romannumeral\@tempcnta}{#2}%
+  \@namedef{parentfileext\romannumeral\@tempcnta}{#3}%
+  \expandafter\edef\csname parentfilename\romannumeral\@tempcnta\endcsname{#2\ifx\empty#3\empty\else.#3\fi}%
+  \expandafter\edef\csname parentfilepath\romannumeral\@tempcnta\endcsname{#1\csname parentfilename\romannumeral\@tempcnta\endcsname}%
+  \@namedef{parentfileabsdir\romannumeral\@tempcnta}{#4}%
+  \expandafter\edef\csname parentfileabspath\romannumeral\@tempcnta\endcsname{%
+    \expandafter\ifx\csname parentfileabsdir\romannumeral\@tempcnta\endcsname\@empty\else
+      \csname parentfileabsdir\romannumeral\@tempcnta\endcsname
+      \csname parentfilename\romannumeral\@tempcnta\endcsname
     \fi
   }%
   \ifnum\@tempcnta<\c@currfiledepth
@@ -358,11 +355,11 @@
 }
 \else
 \def\currfile@getparents#1#2#3{%
-  \@namedef{parentfiledir\currfile@parentnumber}{#1}%
-  \@namedef{parentfilebase\currfile@parentnumber}{#2}%
-  \@namedef{parentfileext\currfile@parentnumber}{#3}%
-  \expandafter\edef\csname parentfilename\currfile@parentnumber\endcsname{#2\ifx\empty#3\empty\else.#3\fi}%
-  \expandafter\edef\csname parentfilepath\currfile@parentnumber\endcsname{#1\csname parentfilename\currfile@parentnumber\endcsname}%
+  \@namedef{parentfiledir\romannumeral\@tempcnta}{#1}%
+  \@namedef{parentfilebase\romannumeral\@tempcnta}{#2}%
+  \@namedef{parentfileext\romannumeral\@tempcnta}{#3}%
+  \expandafter\edef\csname parentfilename\romannumeral\@tempcnta\endcsname{#2\ifx\empty#3\empty\else.#3\fi}%
+  \expandafter\edef\csname parentfilepath\romannumeral\@tempcnta\endcsname{#1\csname parentfilename\romannumeral\@tempcnta\endcsname}%
   \ifnum\@tempcnta<\c@currfiledepth
     \advance\@tempcnta\@ne
     \expandafter\currfile@getparents
