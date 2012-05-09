@@ -34,7 +34,8 @@
     \DeclareBoolOption[false]{fink}%
 }%
 \DeclareVoidOption{force}{\PassOptionsToPackage{force}{filehook}}
-\DeclareBoolOption[false]{parent}%
+\DeclareBoolOption[false]{parent}
+\DeclareBoolOption[false]{parents}
 \DeclareBoolOption[false]{realmainfile}%
 \let\ifcurrfile@realmainfile\relax
 \DeclareBoolOption[false]{abspath}%
@@ -321,6 +322,68 @@
 \fi
 %    \end{macrocode}
 % \end{macro}
+%
+%    \begin{macrocode}
+\ifcurrfile@parents
+%    \end{macrocode}
+%
+% \begin{macro}{\currfilegetparents}
+%    \begin{macrocode}
+\newcommand*\currfilegetparents{%
+  \@tempcnta\@ne
+  \expandafter\currfile@getparents\currfile@stack\relax
+  \relax\relax\relax\relax\relax\relax\relax
+}
+\def\currfile@parentnumber{%
+    \romannumeral\@tempcnta
+}
+\ifcurrfile@abspath
+\def\currfile@getparents#1#2#3#4{%
+  \@namedef{parentfiledir\currfile@parentnumber}{#1}%
+  \@namedef{parentfilebase\currfile@parentnumber}{#2}%
+  \@namedef{parentfileext\currfile@parentnumber}{#3}%
+  \expandafter\edef\csname parentfilename\currfile@parentnumber\endcsname{#2\ifx\empty#3\empty\else.#3\fi}%
+  \expandafter\edef\csname parentfilepath\currfile@parentnumber\endcsname{#1\csname parentfilename\currfile@parentnumber\endcsname}%
+  \@namedef{parentfileabsdir\currfile@parentnumber}{#4}%
+  \expandafter\edef\csname parentfileabspath\currfile@parentnumber\endcsname{%
+    \expandafter\ifx\csname parentfileabsdir\currfile@parentnumber\endcsname\@empty\else
+      \csname parentfileabsdir\currfile@parentnumber\endcsname
+      \csname parentfilename\currfile@parentnumber\endcsname
+    \fi
+  }%
+  \ifnum\@tempcnta<\c@currfiledepth
+    \advance\@tempcnta\@ne
+    \expandafter\currfile@getparents
+  \fi
+}
+\else
+\def\currfile@getparents#1#2#3{%
+  \@namedef{parentfiledir\currfile@parentnumber}{#1}%
+  \@namedef{parentfilebase\currfile@parentnumber}{#2}%
+  \@namedef{parentfileext\currfile@parentnumber}{#3}%
+  \expandafter\edef\csname parentfilename\currfile@parentnumber\endcsname{#2\ifx\empty#3\empty\else.#3\fi}%
+  \expandafter\edef\csname parentfilepath\currfile@parentnumber\endcsname{#1\csname parentfilename\currfile@parentnumber\endcsname}%
+  \ifnum\@tempcnta<\c@currfiledepth
+    \advance\@tempcnta\@ne
+    \expandafter\currfile@getparents
+  \fi
+}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\parentfile}[2]{file path part}{number}
+% Expands to the \Macro\parentfile<part><roman number> macro.
+%    \begin{macrocode}
+\newcommand\parentfile[2]{%
+    \csname parentfile#1\romannumeral#2\endcsname
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\fi
+%    \end{macrocode}
 %
 % \iffalse
 %<debug> \def\dindent{}
