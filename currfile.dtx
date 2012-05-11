@@ -50,6 +50,7 @@
 \ifx\IncludeImplementation\relax
     \OnlyDescription
 \fi
+\let\cnt\env
 \begin{document}
   \DocInput{currfile.dtx}
   \PrintChanges
@@ -137,8 +138,8 @@
 % \let\keydescstyle\macrodescstyle
 % \DescribeCounter{currfiledepth}
 % This\marginpar{\raggedright New in v0.7 from 2012/05/09} \LaTeX\ counter provides the nesting depth of the current input file.
-% For the main file name it has a value of 1.
-% Inside a sub-file of the main file it has a value of 2, while in a sub-file to that file it has a value of 3, etc.
+% For the main file name it has a value of 0
+% Inside a sub-file of the main file it has a value of 1, while in a sub-file to that file it has a value of 2, etc.
 % Like all \LaTeX\ counter it can be typeset using \Macro\arabic{currfiledepth} and its numeric value can be accessed
 % using \Macro\value{currfiledepth}.
 % \endgroup
@@ -265,7 +266,7 @@
 % \DescribeMacro{\parentfileext}
 % \DescribeMacro{\parentfilename}
 % \DescribeMacro{\parentfilepath}
-% These macros are analog to the |\curfile...| macros but for the parent file of the current file.
+% These macros are analog to the |\currfile...| macros but for the parent file of the current file.
 % They are all empty for the main file which does not have a parent file.
 %
 % \DescribeMacro{\parentfileabsdir}
@@ -273,6 +274,31 @@
 % These macros are provided if the \opt{abspath} option is used in addition to \opt{parent}.
 % They are also empty for the main file.
 %
+%
+% \section{Access all parent files}\label{sec:parents}
+% If\marginpar{\raggedright New in v0.7 from 2012/05/09}
+% the \opt{parents} package option is enabled the following macros are provided.
+% Note that this option does not enable the \opt{parent} option.
+%
+% \DescribeMacro{\currfilegetparents}
+% This macro locally defines file name macros for all parent files of the current input file:
+% The macros are named like the ones of the \opt{parent} option, but also include a trailing 
+% roman number to indicate the parent file level, starting with `i` for the first parent file:
+%
+% \begin{DescribeMacrosTab}{llll}
+% \Macro{\parentfilediri}     & \Macro{\parentfiledirii}     &  $\ldots$ \\
+% \Macro{\parentfilebasei}    & \Macro{\parentfilebaseii}    &  $\ldots$ \\
+% \Macro{\parentfileexti}     & \Macro{\parentfileextii}     &  $\ldots$ \\
+% \Macro{\parentfilenamei}    & \Macro{\parentfilenameii}    &  $\ldots$ \\
+% \Macro{\parentfilepathi}    & \Macro{\parentfilepathii}    &  $\ldots$ \\
+% \Macro{\parentfileabsdiri}  & \Macro{\parentfileabsdirii}  &  $\ldots$ \\
+% \Macro{\parentfileabspathi} & \Macro{\parentfileabspathii} &  $\ldots$ \\
+% \end{DescribeMacrosTab}
+% Note that these macros are only defined in the current group and not globally like all other file name macros.
+% The number of the highest parent file is given by the \cnt{currfiledepth} counter.
+%
+% For example, if \Macro\currfilegetparents is used in a sub-sub-sub-file the \cnt{currfiledepth} counter is 3
+% and \Macro\parentfilenameiii is the name of the main document file.
 %
 % \section{Usage inside file hooks}
 % This package uses the `EveryFile' hooks of the \pkg{filehook} package to update its macros.
