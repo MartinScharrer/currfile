@@ -251,12 +251,15 @@
 %    \begin{macrocode}
 \def\currfile@pop{%
 %<debug> \message{^^JDEBUG: \dindent\empty Leaving file '\currfilename' ^^J }%
-  \ifx\currfile@stack\empty
+  \ifcase0%
+    \ifx\currfile@stack\empty 1\else
+    \ifnum\value{currfiledepth}<\@ne 1\fi\fi
+  \relax
+    \addtocounter{currfiledepth}\m@ne
+  \else
     \PackageWarning{currfile}{File stack underflow!}%
     \global\let\currfile@stack\currfile@stackinit
-    \setcounter{currfiledepth}\@ne
-  \else
-    \addtocounter{currfiledepth}\m@ne
+    \setcounter{currfiledepth}\z@
   \fi
   \expandafter\currfile@pop@\currfile@stack\relax
   \relax\relax\relax\relax\relax\relax\relax
@@ -399,6 +402,7 @@
 \let\currfileabspath\@empty
 \let\currfileabsdir\@empty
 \newcounter{currfiledepth}
+\setcounter{currfiledepth}\m@ne
 \currfile@push
 \ifcurrfile@realmainfile
     \getmainfile
