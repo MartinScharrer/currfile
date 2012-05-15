@@ -29,7 +29,7 @@
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesFile{currfile.dtx}[%
 %<=*DATE>
-    2012/05/09
+    2012/05/15
 %<=/DATE>
 %<=*VERSION>
     v0.7
@@ -86,7 +86,7 @@
 % \changes{v0.4}{2011/01/09}{Added if-macros and sanitized currfile macros.}
 % \changes{v0.5}{2011/09/18}{Added support for \cs{input@path} and files with multiple dots.}
 % \changes{v0.6}{2012/05/06}{Added support for absolute file paths.}
-% \changes{v0.7}{2012/05/09}{Added support for parent file paths.}
+% \changes{v0.7}{2012/05/15}{Added support for parent file paths.}
 %
 % \GetFileInfo{currfile.dtx}
 %
@@ -137,7 +137,7 @@
 % \let\DescribeCounter\DescribeKey
 % \let\keydescstyle\macrodescstyle
 % \DescribeCounter{currfiledepth}
-% This\marginpar{\raggedright New in v0.7 from 2012/05/09} \LaTeX\ counter provides the nesting depth of the current input file.
+% This\marginpar{\raggedright New in v0.7 from 2012/05/15} \LaTeX\ counter provides the nesting depth of the current input file.
 % For the main file name it has a value of 0
 % Inside a sub-file of the main file it has a value of 1, while in a sub-file to that file it has a value of 2, etc.
 % Like all \LaTeX\ counter it can be typeset using \Macro\arabic{currfiledepth} and its numeric value can be accessed
@@ -187,7 +187,7 @@
 % This option requires the compiler option `|-recorder|' to be used in order to work correctly.
 % See \autoref{sec:abspath} for more details.
 %
-% Using the boolean \opt{parent} option\marginpar{\raggedright New in v0.7 from 2012/05/09}
+% Using the boolean \opt{parent} option\marginpar{\raggedright New in v0.7 from 2012/05/15}
 % additional macros are set for the parent file of the current file.
 % See \autoref{sec:parent} for more details.
 %
@@ -257,7 +257,7 @@
 % \Macro\theabspath and \Macro\theabsdir are empty.
 %
 % \section{Parent file macros}\label{sec:parent}
-% If\marginpar{\raggedright New in v0.7 from 2012/05/09}
+% If\marginpar{\raggedright New in v0.7 from 2012/05/15}
 % the \opt{parent} package option is enabled the following macros are provided.
 % They are no direct |\if...| macros for these but the general \Macro\ifcurrfile macro can be used with them.
 %
@@ -276,7 +276,7 @@
 %
 %
 % \section{Access all parent files}\label{sec:parents}
-% If\marginpar{\raggedright New in v0.7 from 2012/05/09}
+% If\marginpar{\raggedright New in v0.7 from 2012/05/15}
 % the \opt{parents} package option is enabled the following macros are provided.
 % Note that this option does not enable the \opt{parent} option.
 %
