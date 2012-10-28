@@ -117,7 +117,7 @@
         \global\let\currfileabspath\theabspath
         \xdef\currfileabsdir{\theabsdir\currfiledir}%
     \fi
-    \addtocounter{currfiledepth}\@ne
+    \global\advance\c@currfiledepth by\@ne
   \endgroup
 %<debug> \expandafter\gdef\expandafter\dindent\expandafter{\dindent\space}%
 %<debug> \message{^^JDEBUG: \dindent\empty Entering file '\currfilename' ^^J }%
@@ -253,13 +253,13 @@
 %<debug> \message{^^JDEBUG: \dindent\empty Leaving file '\currfilename' ^^J }%
   \ifcase0%
     \ifx\currfile@stack\empty 1\else
-    \ifnum\value{currfiledepth}<\@ne 1\fi\fi
+    \ifnum\c@currfiledepth<\@ne 1\fi\fi
   \relax
-    \addtocounter{currfiledepth}\m@ne
+    \global\advance\c@currfiledepth by\m@ne
   \else
     \PackageWarning{currfile}{File stack underflow!}%
     \global\let\currfile@stack\currfile@stackinit
-    \setcounter{currfiledepth}\z@
+    \global\c@currfiledepth=\z@
   \fi
   \expandafter\currfile@pop@\currfile@stack\relax
   \relax\relax\relax\relax\relax\relax\relax
@@ -402,7 +402,7 @@
 \let\currfileabspath\@empty
 \let\currfileabsdir\@empty
 \newcounter{currfiledepth}
-\setcounter{currfiledepth}\m@ne
+\global\c@currfiledepth\m@ne
 \currfile@push
 \ifcurrfile@realmainfile
     \getmainfile
