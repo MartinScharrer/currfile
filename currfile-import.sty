@@ -1,0 +1,23 @@
+%    \begin{macrocode}
+\ProvidesPackage{currfile-import}[2013/02/01 v1.0 Support for the 'import' package in 'currfile']
+
+\RequirePackage{currfile}[2013/02/01]
+\RequirePackage{import}[2009/03/23]
+% \end{macro}
+%
+% \begin{macro}{\currfile@checkpath@import}
+% Special version for the \pkg{import} package.
+%    \begin{macrocode}
+\def\currfile@checkpath{%
+    \ifx\IfFileExists\@iffileonpath
+        \currfile@check@inputpath
+    \else
+        \openin\@inputcheck\@filef@und\relax
+        \ifeof\@inputcheck
+            \currfile@check@inputpath
+        \fi
+    \fi
+    \closein\@inputcheck
+}
+%    \end{macrocode}
+% \end{macro}

@@ -191,33 +191,6 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\currfile@checkpath@import}
-% Special version for the \pkg{import} package.
-%    \begin{macrocode}
-\def\currfile@checkpath@import{%
-    \ifx\IfFileExists\@iffileonpath
-        \currfile@check@inputpath
-    \else
-        \openin\@inputcheck\@filef@und\relax
-        \ifeof\@inputcheck
-            \currfile@check@inputpath
-        \fi
-    \fi
-    \closein\@inputcheck
-}
-
-\@ifpackageloaded{import}{%
-    \global\let\currfile@checkpath\currfile@checkpath@import
-}{%
-    \AtBeginDocument{%
-        \@ifpackageloaded{import}{%
-            \global\let\currfile@checkpath\currfile@checkpath@import
-        }{}%
-    }%
-}
-%    \end{macrocode}
-% \end{macro}
-%
 %
 % \begin{macro}{\currfile@parseext}
 % Replacement for \Macro\filename@simple to allow multiple dots in a filename.
