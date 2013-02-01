@@ -166,29 +166,18 @@
 \def\currfile@checkpath{%
     \openin\@inputcheck\@filef@und\relax
     \ifeof\@inputcheck
-        \expandafter\@tfor
-        \expandafter\@tempb
-        \expandafter:\expandafter=\input@path\do{%
-            \openin\@inputcheck\@tempb\@filef@und\relax
-            \ifeof\@inputcheck\else
-                \edef\@filef@und{\@tempb\@filef@und}%
-                \@break@tfor
-            \fi
-        }%
+        \currfile@check@inputpath
     \fi
     \closein\@inputcheck
 }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\currfile@checkpath@import}
-% This loop is placed in an own macro for efficiency reasons.
-% In the majority of cases it should not be needed and having it as
-% a macro avoids the need to skip over this code as part of a conditional clause
-% for every read file.
-% \changes{2011/09/18}{v0.5}{New macro as part of the \cs{input@path} support.}
+%
+% \begin{macro}{\currfile@check@inputpath}
+% Check all paths in the \cs{input@path} macro.
 %    \begin{macrocode}
-\def\currfile@checkpath@import{%
+\def\currfile@check@inputpath{%
     \expandafter\@tfor
     \expandafter\@tempb
     \expandafter:\expandafter=\input@path\do{%
@@ -198,6 +187,22 @@
             \@break@tfor
         \fi
     }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\currfile@checkpath@import}
+% Special version for the \pkg{import} package.
+%    \begin{macrocode}
+\def\currfile@checkpath@import{%
+    \ifx\IfFileExists\@iffileonpath
+        \currfile@check@inputpath
+    \else
+        \openin\@inputcheck\@filef@und\relax
+        \ifeof\@inputcheck
+            \currfile@check@inputpath
+        \fi
+    \fi
     \closein\@inputcheck
 }
 
