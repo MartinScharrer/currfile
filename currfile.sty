@@ -181,6 +181,38 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\currfile@checkpath@import}
+% This loop is placed in an own macro for efficiency reasons.
+% In the majority of cases it should not be needed and having it as
+% a macro avoids the need to skip over this code as part of a conditional clause
+% for every read file.
+% \changes{2011/09/18}{v0.5}{New macro as part of the \cs{input@path} support.}
+%    \begin{macrocode}
+\def\currfile@checkpath@import{%
+    \expandafter\@tfor
+    \expandafter\@tempb
+    \expandafter:\expandafter=\input@path\do{%
+        \openin\@inputcheck\@tempb\@filef@und\relax
+        \ifeof\@inputcheck\else
+            \edef\@filef@und{\@tempb\@filef@und}%
+            \@break@tfor
+        \fi
+    }%
+    \closein\@inputcheck
+}
+
+\@ifpackageloaded{import}{%
+    \global\let\currfile@checkpath\currfile@checkpath@import
+}{%
+    \AtBeginDocument{%
+        \@ifpackageloaded{import}{%
+            \global\let\currfile@checkpath\currfile@checkpath@import
+        }{}%
+    }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \begin{macro}{\currfile@parseext}
 % Replacement for \Macro\filename@simple to allow multiple dots in a filename.
