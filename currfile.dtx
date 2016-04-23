@@ -29,10 +29,10 @@
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesFile{currfile.dtx}[%
 %<=*DATE>
-    2013/02/01
+    2015/04/23
 %<=/DATE>
 %<=*VERSION>
-    v0.7b
+    v0.7c
 %<=/VERSION>
     DTX file for currfile package]
 
@@ -59,7 +59,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{1115}
+% \CheckSum{1114}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -89,6 +89,7 @@
 % \changes{v0.7}{2012/05/15}{Added support for parent file paths.}
 % \changes{v0.7a}{2012/10/28}{Fixed issue with \pkg{enumitem} package which redefines \cs{value}.}
 % \changes{v0.7b}{2013/02/01}{Support for \cs{\subinput*} etc.\ from the \pkg{import} package which requires a different path search order.}
+% \changes{v0.7c}{2015/04/23}{Removed stack underflow warning if loaded by other package. Set default file name in this case to main file name.}
 %
 % \GetFileInfo{currfile.dtx}
 %
@@ -109,6 +110,19 @@
 % It properly supports file names with multiple dots and the \cs{input@path} feature used by some packages like \pkg{import}.
 % Optionally also the absolute location of current input file can be provided if a special compiler option is enabled.
 % \end{abstract}
+%
+% \tableofcontents
+%
+% \section{Important notice}
+% This package relies heavily on the package \pkg{filehook} by the same author and installs at-begin and at-end hooks for all files.
+% The provided macros for the file names \emph{will only work for files loaded \emph{after} the package}.
+% This means only for files which are getting opened afterwards and where not yet opened, as the at-begin hook is required to run.
+% The macros will therefore not work correctly in a package which loaded \pkg{currfile}, but for all further loaded packages.
+%
+% The options \opt{abspath} and \opt{realmainfile} may be used to improve the behavior in such cases.
+%
+% However, it is simply recommended to load \pkg{currfile} as early as possible. It can even be loaded before the class using
+% \Macro\RequirePackage{currfile}.
 %
 % \section{Usage}
 %
