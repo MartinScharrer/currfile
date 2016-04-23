@@ -285,7 +285,6 @@
   \relax
     \global\advance\c@currfiledepth by\m@ne
   \else
-    \PackageWarning{currfile}{File stack underflow!}%
     \global\let\currfile@stack\currfile@stackinit
     \global\c@currfiledepth=\z@
   \fi
@@ -431,7 +430,6 @@
 \let\currfileabsdir\@empty
 \newcounter{currfiledepth}
 \global\c@currfiledepth\m@ne
-\currfile@push
 \ifcurrfile@realmainfile
     \getmainfile
     \ifx\themainfile\@empty
@@ -442,6 +440,7 @@
 \else
     \currfile@set{\currfile@maindir\jobname.\currfile@mainext}
 \fi
+\currfile@push
 \let\currfile@stackinit\currfile@stack
 %    \end{macrocode}
 % \end{macro}
