@@ -174,7 +174,7 @@ ${TDSZIP}: ${TDSDIR}
 
 zip: ${CTAN_FILE}
 
-${CTAN_FILE}: $(addprefix ${BUILDDIR}/,${CTANFILES}) ${TDSZIP}
+${CTAN_FILE}: $(addprefix ${BUILDDIR}/,${CTANFILES})
 	-${RM} $@
 	${ZIP} -j $@ $^
 
