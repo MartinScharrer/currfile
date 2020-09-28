@@ -1,8 +1,8 @@
 % \iffalse meta-comment
 %<=*COPYRIGHT>
 %%
-%% Copyright (c) 2010-2011 by Martin Scharrer <martin@scharrer.me>
-%% ---------------------------------------------------------------
+%% Copyright (c) 2010-2020 by Martin Scharrer <martin@scharrer-online.de>
+%% ----------------------------------------------------------------------
 %%
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3c
@@ -29,10 +29,10 @@
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesFile{currfile.dtx}[%
 %<=*DATE>
-    2015/04/23
+    2020/09/29
 %<=/DATE>
 %<=*VERSION>
-    v0.7c
+    v0.7d
 %<=/VERSION>
     DTX file for currfile package]
 
@@ -90,6 +90,8 @@
 % \changes{v0.7a}{2012/10/28}{Fixed issue with \pkg{enumitem} package which redefines \cs{value}.}
 % \changes{v0.7b}{2013/02/01}{Support for \cs{\subinput*} etc.\ from the \pkg{import} package which requires a different path search order.}
 % \changes{v0.7c}{2015/04/23}{Removed stack underflow warning if loaded by other package. Set default file name in this case to main file name.}
+% \changes{v0.7d}{2020/09/29}{Updated documentation for 2020/10/01 \LaTeX\ release.}
+%
 %
 % \GetFileInfo{currfile.dtx}
 %
@@ -102,7 +104,7 @@
 %
 % \author{Martin Scharrer}
 % \email{martin@scharrer-online.de}
-% \repository{https://bitbucket.org/martin_scharrer/currfile/}
+% \repository{https://sourceforge.net/projects/currfile/}
 % \maketitle
 %
 % \begin{abstract}
@@ -112,6 +114,17 @@
 % \end{abstract}
 %
 % \tableofcontents
+%
+% \section{Direct filename support in \LaTeX\ 2020/10/01}
+% With the \LaTeX\ release 2020/10/01 the core now provides own filehooks and access to the current filename and path.
+% This package still uses the authors \pkg{filehook} package to collect the filenames but there the core implementation is now used internally.
+% Due to this users could see changes in the output in some special cases.
+%
+% For new documents users might want to use the new core macros \Macro\CurrentFile and \Macro\CurrentFilePath discribed in 
+% \href{http://mirrors.ctan.org/macros/latex-dev/base/ltfilehook-doc.pdf}{\texttt{ltfilehook-doc}}
+% directly and use this package only if the advanced features -- like parent or absolute file names - are required.
+% Note that \Macro\CurrentFile is empty for the main document which filename can be accessed usually over \Macro\jobname.
+%
 %
 % \section{Important notice}
 % This package relies heavily on the package \pkg{filehook} by the same author and installs at-begin and at-end hooks for all files.

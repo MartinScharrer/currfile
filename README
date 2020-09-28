@@ -1,8 +1,8 @@
 LaTeX package 'currfile'
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Copyright (c) 2010-2016 by Martin Scharrer <martin@scharrer-online.de>
-WWW: http://latex.scharrer-online.de/
-Code repository: https://bitbucket.org/martin_scharrer/currfile
+Copyright (c) 2010-2020 by Martin Scharrer <martin@scharrer-online.de>
+WWW: https://sourceforge.net/projects/currfile/
+Code repository: https://sourceforge.net/p/currfile/code/
 
 Provides macros holding the file name information (dir, base name, extension, full name and full path) for
 files read by LaTeX's \input and \include macros.
