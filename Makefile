@@ -11,7 +11,7 @@ export CONTRIBUTION VERSION NAME EMAIL SUMMARY DIRECTORY DONOTANNOUNCE ANNOUNCE 
 MAINDTXS      = ${CONTRIBUTION}.dtx
 DTXFILES      = ${MAINDTXS}
 INSFILES      = ${CONTRIBUTION}.ins
-LTXFILES      = ${CONTRIBUTION}.sty currfile-abspath.sty
+LTXFILES      = currfile.sty currfile-abspath.sty
 MAINPDFS      = ${CONTRIBUTION}.pdf
 LTXDOCFILES   = ${MAINPDFS} README
 LTXSRCFILES   = ${DTXFILES} ${INSFILES}
@@ -174,9 +174,12 @@ ${TDSZIP}: ${TDSDIR}
 
 zip: ${CTAN_FILE}
 
-${CTAN_FILE}: $(addprefix ${BUILDDIR}/,${CTANFILES})
+${CTAN_FILE}: $(addprefix ${BUILDDIR}/,${CTANFILES}) 
+	-rm -rf ${CONTRIBUTION}/
+	mkdir ${CONTRIBUTION}/
+	cp $(addprefix ${BUILDDIR}/,${CTANFILES}) ${CONTRIBUTION}/
 	-${RM} $@
-	${ZIP} -j $@ $^
+	${ZIP} $@ ${CONTRIBUTION} 
 
 upload: VERSION = ${GETVERSION}
 
