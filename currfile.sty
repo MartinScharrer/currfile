@@ -164,7 +164,7 @@
 % \changes{2011/09/18}{v0.5}{New macro as part of the \cs{input@path} support.}
 %    \begin{macrocode}
 \def\currfile@checkpath{%
-    \openin\@inputcheck\@filef@und\relax
+    \openin\@inputcheck{\@filef@und}\relax
     \ifeof\@inputcheck
         \currfile@check@inputpath
     \fi
@@ -181,7 +181,7 @@
     \expandafter\@tfor
     \expandafter\@tempb
     \expandafter:\expandafter=\input@path\do{%
-        \openin\@inputcheck\@tempb\@filef@und\relax
+        \openin\@inputcheck{\@tempb\@filef@und}\relax
         \ifeof\@inputcheck\else
             \edef\@filef@und{\@tempb\@filef@und}%
             \@break@tfor
@@ -199,7 +199,7 @@
     \ifx\IfFileExists\@iffileonpath
         \currfile@check@inputpath
     \else
-        \openin\@inputcheck\@filef@und\relax
+        \openin\@inputcheck{\@filef@und}\relax
         \ifeof\@inputcheck
             \currfile@check@inputpath
         \fi
