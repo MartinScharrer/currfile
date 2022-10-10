@@ -13,7 +13,7 @@ DTXFILES      = ${MAINDTXS}
 INSFILES      = ${CONTRIBUTION}.ins
 LTXFILES      = currfile.sty currfile-abspath.sty
 MAINPDFS      = ${CONTRIBUTION}.pdf
-LTXDOCFILES   = ${MAINPDFS} README
+LTXDOCFILES   = ${MAINPDFS} README.txt
 LTXSRCFILES   = ${DTXFILES} ${INSFILES}
 PLAINFILES    = #${CONTRIBUTION}.tex
 PLAINDOCFILES = #${CONTRIBUTION}.?
@@ -67,7 +67,7 @@ all: doc
 
 doc: ${MAINPDFS}
 
-${MAINPDFS}: ${DTXFILES} README ${INSFILES} ${LTXFILES}
+${MAINPDFS}: ${DTXFILES} README.txt ${INSFILES} ${LTXFILES}
 	${MAKE} --no-print-directory build
 	cp "${BUILDDIR}/$@" "$@"
 
@@ -77,7 +77,7 @@ endif
 
 ${BUILDDIR}: ${MAINFILES}
 	-mkdir ${BUILDDIR} 2>/dev/null || true
-	cp ${INSFILES} README ${BUILDDIR}/
+	cp ${INSFILES} README.txt ${BUILDDIR}/
 	$(foreach DTX,${MAINDTXS}, tex '\input ydocincl\relax\includefiles{${DTX}}{${BUILDDIR}/${DTX}}' && rm -f ydocincl.log;)
 	cd ${BUILDDIR}; $(foreach INS, ${INSFILES}, tex ${INS};)
 	cd ${BUILDDIR}; $(foreach DTX, ${MAINDTXS}, ${LATEXMK} ${DTX};)
