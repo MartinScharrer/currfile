@@ -19,7 +19,16 @@
 %    \begin{macrocode}
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=currfile,prefix=currfile@}
-
+%    \end{macrocode}
+%
+% Handle already loaded \pkg{currfile-abspath} package.
+%    \begin{macrocode}
+\@ifpackageloaded{currfile-abspath}{%
+    \let\currfile@mainext\relax
+}{}%
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \@ifpackageloaded{fink}{%
     \DeclareStringOption[\fnk@mainext]{mainext}%
     \DeclareStringOption[\fnk@maindir]{maindir}%
@@ -62,13 +71,28 @@
         \currfile@realmainfilefalse
     \fi
 \fi
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\begingroup
+\@tempswafalse
 \ifcurrfile@abspath
-    \RequirePackage{currfile-abspath}
+    \@tempswatrue
 \else
 \ifcurrfile@realmainfile
-    \RequirePackage{currfile-abspath}
+    \@tempswatrue
 \fi\fi
+
+\if@tempswa
+    \endgroup
+    \@ifpackageloaded{currfile-abspath}{%
+        \PackageWarning{currfile}{Sub-package 'currfile-abspath' already loaded beforehand.
+        This might lead to wrong results when non-default options are used.}%
+    }{}%
+    \RequirePackage{currfile-abspath}
+\else
+    \endgroup
+\fi
 %    \end{macrocode}
 %
 %
